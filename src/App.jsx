@@ -49,13 +49,16 @@ export default function App() {
     try {
       setIsLoading(true);
       const list = await contentService.fetchContents();
-      const safeList = Array.isArray(list) ? list : [];
-      setContents(safeList);
-      const calculatedStats = contentService.getStats(safeList) || {};
-      const checklistItems = await checklistService.fetch();
-      const safeChecklist = Array.isArray(checklistItems) ? checklistItems : [];
-      const checklistPending = safeChecklist.filter(i => !i?.completed).length;
-      setStats({ ...calculatedStats, checklistPending });
+      if (Array.isArray(list) && list.length > 0) {
+        setContents(list);
+        const calculatedStats = contentService.getStats(list) || {};
+        const checklistItems = await checklistService.fetch();
+        const safeChecklist = Array.isArray(checklistItems) ? checklistItems : [];
+        const checklistPending = safeChecklist.filter(i => !i?.completed).length;
+        setStats({ ...calculatedStats, checklistPending });
+      } else if (Array.isArray(list)) {
+        setContents(prev => (prev.length > 0 ? prev : []));
+      }
     } catch (err) {
       console.warn('Lỗi đồng bộ Supabase:', err);
     } finally {
@@ -142,12 +145,17 @@ export default function App() {
 
         // 1. If followers > 0, update gsa_profile_growth
         if (followers > 0) {
-          await supabase.from('gsa_profile_growth').upsert({
-            name: platform === 'tiktok' ? 'TikTok' : 'Facebook',
-            handle: authorHandle.startsWith('@') ? authorHandle : `@${authorHandle}`,
-            current_followers: followers,
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'name' }).catch(err => console.warn('Lỗi cập nhật profile_growth:', err));
+          try {
+            const { error: gErr } = await supabase.from('gsa_profile_growth').upsert({
+              name: platform === 'tiktok' ? 'TikTok' : 'Facebook',
+              handle: authorHandle.startsWith('@') ? authorHandle : `@${authorHandle}`,
+              current_followers: followers,
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'name' });
+            if (gErr) console.warn('Lỗi cập nhật gsa_profile_growth:', gErr.message);
+          } catch (ge) {
+            console.warn('Lỗi upsert profile_growth:', ge);
+          }
         }
 
         // 2. Upsert items into social_metrics
@@ -167,15 +175,13 @@ export default function App() {
             synced_at: new Date().toISOString()
           }));
 
-          const { error } = await supabase
+          const { error: mErr } = await supabase
             .from('social_metrics')
             .upsert(records, { onConflict: 'platform,post_id' });
 
-          if (error) throw error;
+          if (mErr) throw mErr;
 
           showToast(`Đã đồng bộ thành công ${records.length} bài viết từ ${platform.toUpperCase()} vào Supabase!`, 'success');
-          setCurrentTab('performance');
-          refreshData();
         }
       } catch (err) {
         console.error('Lỗi tự động lưu sync payload:', err);
