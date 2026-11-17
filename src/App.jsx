@@ -20,6 +20,7 @@ import SettingsData from './components/views/SettingsData';
 
 import { contentService } from './services/contentService';
 import { checklistService } from './services/otherDataService';
+import { supabase } from './services/supabaseClient';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('calendar');
@@ -76,6 +77,115 @@ export default function App() {
     return () => {
       if (unsubscribe) unsubscribe();
     };
+  }, [refreshData]);
+
+  // Handle auto-sync payload from Bookmarklet via URL param, Hash, or window.name
+  useEffect(() => {
+    let isProcessing = false;
+    const handleIncomingSyncPayload = async () => {
+      if (isProcessing) return;
+      try {
+        let rawData = null;
+
+        // 1. Check URL Hash: #sync_payload=...
+        const hash = window.location.hash || '';
+        if (hash.includes('sync_payload=')) {
+          const m = hash.match(/sync_payload=([^&]+)/);
+          if (m && m[1]) rawData = decodeURIComponent(m[1]);
+        }
+
+        // 2. Check URL Search: ?sync_payload=...
+        if (!rawData && window.location.search) {
+          const params = new URLSearchParams(window.location.search);
+          const p = params.get('sync_payload');
+          if (p) rawData = p;
+        }
+
+        // 3. Check window.name
+        if (!rawData && window.name) {
+          try {
+            let str = window.name;
+            if (str.startsWith('gsa_sync_')) {
+              str = decodeURIComponent(str.replace('gsa_sync_', ''));
+            }
+            if (str.startsWith('{') || str.startsWith('[')) {
+              rawData = str;
+            }
+          } catch (_) {}
+        }
+
+        if (!rawData) return;
+
+        let payload = null;
+        try {
+          payload = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+        } catch (e) {
+          console.warn('Lỗi parse sync_payload:', e);
+          return;
+        }
+
+        if (!payload) return;
+        isProcessing = true;
+
+        // Clean URL search & hash, and clear window.name so refreshing won't re-sync
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.name = '';
+
+        const platform = payload.platform || 'tiktok';
+        const authorHandle = payload.author_handle || (platform === 'tiktok' ? 'thuyvy.risetoshine' : 'thuyvy.vandinh');
+        const items = Array.isArray(payload.items) ? payload.items : (Array.isArray(payload) ? payload : []);
+        const followers = Number(payload.followers) || 0;
+
+        if (items.length === 0 && followers === 0) return;
+
+        showToast(`Đang đồng bộ ${items.length} bài viết từ ${platform.toUpperCase()} vào Supabase...`, 'info');
+
+        // 1. If followers > 0, update gsa_profile_growth
+        if (followers > 0) {
+          await supabase.from('gsa_profile_growth').upsert({
+            name: platform === 'tiktok' ? 'TikTok' : 'Facebook',
+            handle: authorHandle.startsWith('@') ? authorHandle : `@${authorHandle}`,
+            current_followers: followers,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'name' }).catch(err => console.warn('Lỗi cập nhật profile_growth:', err));
+        }
+
+        // 2. Upsert items into social_metrics
+        if (items.length > 0) {
+          const records = items.map(it => ({
+            platform: it.platform || platform,
+            author_handle: it.author_handle || authorHandle,
+            post_id: String(it.post_id || it.id),
+            title: it.title || ('Bài viết ' + platform),
+            url: it.url || (platform === 'tiktok' ? `https://www.tiktok.com/@${authorHandle}/video/${it.post_id || it.id}` : `https://www.facebook.com/${authorHandle}`),
+            views: Number(it.views) || 0,
+            likes: Number(it.likes) || 0,
+            comments: Number(it.comments) || 0,
+            shares: Number(it.shares) || 0,
+            saves: Number(it.saves) || 0,
+            posted_at: it.posted_at || new Date().toISOString(),
+            synced_at: new Date().toISOString()
+          }));
+
+          const { error } = await supabase
+            .from('social_metrics')
+            .upsert(records, { onConflict: 'platform,post_id' });
+
+          if (error) throw error;
+
+          showToast(`Đã đồng bộ thành công ${records.length} bài viết từ ${platform.toUpperCase()} vào Supabase!`, 'success');
+          setCurrentTab('performance');
+          refreshData();
+        }
+      } catch (err) {
+        console.error('Lỗi tự động lưu sync payload:', err);
+        showToast('Lỗi lưu đồng bộ vào Supabase: ' + err.message, 'error');
+      } finally {
+        isProcessing = false;
+      }
+    };
+
+    handleIncomingSyncPayload();
   }, [refreshData]);
 
   // Content CRUD Handlers

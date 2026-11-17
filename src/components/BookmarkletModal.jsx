@@ -115,7 +115,7 @@ export default function BookmarkletModal({ isOpen, onClose, defaultTab = 'facebo
                     Nhấp vào Bookmark <span className="font-semibold text-blue-700">"⚡ Đồng bộ FB Thúy Vy"</span> trên thanh trình duyệt.
                   </li>
                   <li>
-                    Một bảng popup xem trước sẽ xuất hiện ở góc màn hình. Bấm <span className="font-semibold text-blue-600">"🚀 Gửi về Supabase"</span> để lưu số liệu về bảng <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-800">social_metrics</code>!
+                    Một bảng popup xem trước sẽ xuất hiện ở góc màn hình. Bấm <span className="font-semibold text-blue-600">"🚀 Chuyển về Studio"</span>: Trình duyệt sẽ mở Creator Studio và tự động lưu toàn bộ dữ liệu vào bảng <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-800">social_metrics</code> mà không bị CSP chặn mạng!
                   </li>
                 </ol>
               </div>
@@ -182,7 +182,7 @@ export default function BookmarkletModal({ isOpen, onClose, defaultTab = 'facebo
                     Nhấp vào Bookmark <span className="font-semibold text-rose-700">"🎵 Đồng bộ TikTok Thúy Vy"</span> trên trình duyệt.
                   </li>
                   <li>
-                    Bảng popup góc màn hình sẽ liệt kê tất cả video quét được từ DOM và số lượt xem thực tế (VD: 15.1K, 1881, 23.8K). Bấm <span className="font-semibold text-rose-600">"🚀 Gửi về Supabase"</span> để hoàn tất!
+                    Bảng popup góc màn hình sẽ liệt kê tất cả video quét được từ DOM và số lượt xem thực tế (VD: 161.6K, 14.4K, 1427, 993, 23.8K). Bấm <span className="font-semibold text-rose-600">"🚀 Chuyển về Studio"</span> để tự động lưu vào Supabase (vượt qua hoàn toàn cơ chế chặn mạng CSP của TikTok)!
                   </li>
                 </ol>
               </div>
