@@ -1,14 +1,38 @@
 import React, { useState } from 'react';
 import { metricsService } from '../../services/otherDataService';
-import { Save, BarChart3, TrendingUp, Eye, Heart, MessageSquare, Share2, Bookmark } from 'lucide-react';
+import { socialSyncService } from '../../services/socialSyncService';
+import { Save, BarChart3, TrendingUp, Eye, Heart, MessageSquare, Share2, RefreshCw, Bookmark } from 'lucide-react';
+import BookmarkletModal from '../BookmarkletModal';
 
 export default function ManualMetrics({ contents = [], onShowToast }) {
   const [metrics, setMetrics] = useState(() => metricsService.get() || []);
   const [editingId, setEditingId] = useState(null);
   const [tempRow, setTempRow] = useState({});
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [showBookmarkletModal, setShowBookmarkletModal] = useState(false);
 
   const safeContents = Array.isArray(contents) ? contents : [];
   const safeMetrics = Array.isArray(metrics) ? metrics : [];
+
+  const handleSyncTikTok = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await socialSyncService.syncTikTok();
+      if (res?.success) {
+        onShowToast?.(`Đã đồng bộ ${res.videosCount || 0} video từ TikTok @${res.handle}!`, 'success');
+        const refreshed = await metricsService.fetch();
+        setMetrics(refreshed);
+      } else {
+        onShowToast?.('TikTok yêu cầu xác thực bot. Hãy mở Bookmarklet để quét trực tiếp từ trình duyệt!', 'info');
+        setShowBookmarkletModal(true);
+      }
+    } catch (err) {
+      onShowToast?.('Lỗi kết nối máy chủ TikTok: ' + err.message, 'error');
+      setShowBookmarkletModal(true);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const handleStartEdit = (item) => {
     if (!item) return;
@@ -48,6 +72,33 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
 
   return (
     <div className="space-y-6">
+      {/* Top Action Toolbar */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 className="font-bold text-slate-900 text-sm">Quản lý & Cập nhật số liệu bài viết</h3>
+          <p className="text-xs text-slate-500">Đồng bộ tự động từ TikTok hoặc quét số liệu Facebook qua Bookmarklet</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSyncTikTok}
+            disabled={isSyncing}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-sm transition-all cursor-pointer disabled:opacity-70"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            <span>{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ TikTok ngay'}</span>
+          </button>
+
+          <button
+            onClick={() => setShowBookmarkletModal(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors cursor-pointer"
+          >
+            <Bookmark className="w-3.5 h-3.5 text-blue-600" />
+            <span>Bookmarklet Quét Facebook</span>
+          </button>
+        </div>
+      </div>
+
       {/* Top Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
@@ -84,7 +135,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Bảng nhập số liệu thủ công từng bài</h3>
+            <h3 className="text-sm font-bold text-slate-900">Bảng nhập số liệu từng bài</h3>
             <p className="text-xs text-slate-500">Cập nhật chỉ số thực tế sau khi đăng bài để báo cáo ban tổ chức</p>
           </div>
         </div>
@@ -229,6 +280,12 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
           </table>
         </div>
       </div>
+
+      {/* Bookmarklet Modal */}
+      <BookmarkletModal
+        isOpen={showBookmarkletModal}
+        onClose={() => setShowBookmarkletModal(false)}
+      />
     </div>
   );
 }

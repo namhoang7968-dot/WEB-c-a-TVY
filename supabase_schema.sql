@@ -104,6 +104,25 @@ CREATE TABLE IF NOT EXISTS public.gsa_settings (
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- 9. BẢNG: ĐỒNG BỘ MẠNG XÃ HỘI (social_metrics - TikTok & Facebook Sync)
+CREATE TABLE IF NOT EXISTS public.social_metrics (
+    id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    platform TEXT NOT NULL, -- 'tiktok' | 'facebook'
+    author_handle TEXT NOT NULL,
+    post_id TEXT NOT NULL,
+    title TEXT,
+    url TEXT,
+    views BIGINT DEFAULT 0,
+    likes BIGINT DEFAULT 0,
+    comments BIGINT DEFAULT 0,
+    shares BIGINT DEFAULT 0,
+    saves BIGINT DEFAULT 0,
+    posted_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
+    synced_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
+    raw_data JSONB,
+    UNIQUE(platform, post_id)
+);
+
 -- ==============================================================================
 -- BẬT ROW LEVEL SECURITY (RLS) & CHÍNH SÁCH ĐỌC / GHI CHO TOÀN BỘ BẢNG
 -- ==============================================================================
@@ -116,6 +135,7 @@ ALTER TABLE public.gsa_profile_growth ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.gsa_conversions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.gsa_weekly_summaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.gsa_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.social_metrics ENABLE ROW LEVEL SECURITY;
 
 -- Tạo Policy cho phép SELECT, INSERT, UPDATE, DELETE bằng Anon Key
 DROP POLICY IF EXISTS "Allow public all gsa_contents" ON public.gsa_contents;
@@ -141,6 +161,9 @@ CREATE POLICY "Allow public all gsa_weekly_summaries" ON public.gsa_weekly_summa
 
 DROP POLICY IF EXISTS "Allow public all gsa_settings" ON public.gsa_settings;
 CREATE POLICY "Allow public all gsa_settings" ON public.gsa_settings FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public all social_metrics" ON public.social_metrics;
+CREATE POLICY "Allow public all social_metrics" ON public.social_metrics FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- ==============================================================================
 -- DỮ LIỆU MẪU BAN ĐẦU CHO CÁC BẢNG (SEED DATA)
