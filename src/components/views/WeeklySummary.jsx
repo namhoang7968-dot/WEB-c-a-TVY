@@ -20,22 +20,22 @@ export default function WeeklySummary({ contents = [], stats = {}, onShowToast }
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Week Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+      <div className="tactile-card p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-slate-900 text-sm">Báo cáo & Tổng kết tuần chiến dịch</h3>
-          <p className="text-xs text-slate-500 font-normal">Ghi lại kết quả, bài học kinh nghiệm và chuẩn bị cho tuần tiếp theo</p>
+          <h3 className="font-semibold text-[#0F172A] text-sm sm:text-base">Báo cáo & Tổng kết tuần chiến dịch</h3>
+          <p className="text-xs text-slate-500 font-normal mt-0.5">Ghi lại kết quả, bài học kinh nghiệm và chuẩn bị cho tuần tiếp theo</p>
         </div>
 
-        <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/60 self-start sm:self-auto">
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200/60 self-start sm:self-auto">
           {['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'].map((w) => (
             <button
               key={w}
               onClick={() => setSelectedWeek(w)}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                 selectedWeek === w
-                  ? 'bg-white text-slate-900 shadow-2xs'
+                  ? 'bg-white text-slate-900 shadow-2xs font-semibold'
                   : 'text-slate-500 hover:text-slate-900'
               }`}
             >
@@ -45,29 +45,31 @@ export default function WeeklySummary({ contents = [], stats = {}, onShowToast }
         </div>
       </div>
 
-      {/* Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-        <div className="bg-white p-4.5 rounded-xl border border-slate-200/80 shadow-2xs">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Nội dung đã đăng</p>
-          <p className="text-2xl font-bold font-mono text-slate-900">{publishedCount} bài</p>
-          <p className="text-xs text-emerald-600 mt-1 font-medium">Theo dõi qua Supabase</p>
-        </div>
+      {/* Highlights (Instrument Cluster) */}
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200/80">
+          <div className="p-5">
+            <p className="text-xs font-medium text-slate-500 mb-1">Nội dung đã đăng</p>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-[#0F172A] tracking-tight">{publishedCount} bài</p>
+            <p className="text-xs text-emerald-600 mt-1 font-medium">Đồng bộ qua Supabase</p>
+          </div>
 
-        <div className="bg-white p-4.5 rounded-xl border border-slate-200/80 shadow-2xs">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Lượt tiếp cận ước tính</p>
-          <p className="text-2xl font-bold font-mono text-blue-600">42,700 views</p>
-          <p className="text-xs text-slate-400 mt-1 font-normal">Từ TikTok & Facebook cá nhân</p>
-        </div>
+          <div className="p-5">
+            <p className="text-xs font-medium text-slate-500 mb-1">Lượt tiếp cận ước tính</p>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-blue-600 tracking-tight">42,700 views</p>
+            <p className="text-xs text-slate-400 mt-1 font-normal">Từ TikTok & Facebook cá nhân</p>
+          </div>
 
-        <div className="bg-white p-4.5 rounded-xl border border-slate-200/80 shadow-2xs">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Signups ghi nhận</p>
-          <p className="text-2xl font-bold font-mono text-emerald-600">+128 sinh viên</p>
-          <p className="text-xs text-slate-400 mt-1 font-normal">Đã đăng ký qua link cá nhân</p>
+          <div className="p-5">
+            <p className="text-xs font-medium text-slate-500 mb-1">Signups ghi nhận</p>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600 tracking-tight">+128 sinh viên</p>
+            <p className="text-xs text-slate-400 mt-1 font-normal">Đã đăng ký qua link cá nhân</p>
+          </div>
         </div>
       </div>
 
       {/* Reflection Form */}
-      <form onSubmit={handleSaveSummary} className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5 space-y-4">
+      <form onSubmit={handleSaveSummary} className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6 space-y-4">
         <div>
           <label className="block text-xs font-medium text-slate-700 mb-1.5">
             Điểm nổi bật & Bài học kinh nghiệm ({selectedWeek})
@@ -76,7 +78,7 @@ export default function WeeklySummary({ contents = [], stats = {}, onShowToast }
             rows={3}
             value={reflection}
             onChange={(e) => setReflection(e.target.value)}
-            className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 leading-relaxed"
           />
         </div>
 
@@ -88,17 +90,17 @@ export default function WeeklySummary({ contents = [], stats = {}, onShowToast }
             rows={3}
             value={nextWeekPlan}
             onChange={(e) => setNextWeekPlan(e.target.value)}
-            className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 leading-relaxed"
           />
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            className="tactile-btn inline-flex items-center gap-1.5 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer shadow-2xs border border-slate-800"
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>Lưu bản tổng kết</span>
+            <span>Lưu báo cáo {selectedWeek}</span>
           </button>
         </div>
       </form>

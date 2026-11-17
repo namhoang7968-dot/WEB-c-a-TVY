@@ -67,16 +67,16 @@ export default function SettingsData({ onReloadData, onShowToast }) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Storage Mode Banner: Connected to Supabase */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
-        <div className="flex items-start gap-3">
+      <div className="tactile-card rounded-xl p-5 sm:p-6">
+        <div className="flex items-start gap-3.5">
           <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-semibold text-slate-900">Trạng thái lưu trữ dữ liệu</h3>
+              <h3 className="text-sm sm:text-base font-semibold text-[#0F172A]">Trạng thái lưu trữ dữ liệu</h3>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                 <span>Đồng bộ Supabase Cloud (Live)</span>
@@ -90,16 +90,16 @@ export default function SettingsData({ onReloadData, onShowToast }) {
       </div>
 
       {/* Supabase Integration Details */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <h3 className="text-sm font-semibold text-slate-900">Thông tin kết nối Supabase</h3>
+            <h3 className="text-sm font-semibold text-[#0F172A]">Thông tin kết nối Supabase</h3>
           </div>
           <button
             onClick={handleTestConnection}
             disabled={isTesting}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors cursor-pointer"
+            className="tactile-btn inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isTesting ? 'animate-spin' : ''}`} />
             <span>{isTesting ? 'Đang kiểm tra...' : 'Kiểm tra kết nối'}</span>
@@ -147,8 +147,8 @@ export default function SettingsData({ onReloadData, onShowToast }) {
       </div>
 
       {/* Backup and Restore Data */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
-        <h3 className="text-sm font-semibold text-slate-900 mb-1">Sao lưu dự phòng cục bộ (Local JSON Backup)</h3>
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6">
+        <h3 className="text-sm font-semibold text-[#0F172A] mb-1">Sao lưu dự phòng cục bộ (Local JSON Backup)</h3>
         <p className="text-xs text-slate-500 mb-3.5 font-normal">
           Xuất dữ liệu dự phòng về máy hoặc tải lên file JSON khi cần phục hồi.
         </p>
@@ -156,13 +156,13 @@ export default function SettingsData({ onReloadData, onShowToast }) {
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={handleExportJSON}
-            className="inline-flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer shadow-2xs"
+            className="tactile-btn inline-flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer shadow-2xs"
           >
             <Download className="w-3.5 h-3.5 text-slate-600" />
             <span>Xuất file JSON</span>
           </button>
 
-          <label className="inline-flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer shadow-2xs">
+          <label className="tactile-btn inline-flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer shadow-2xs">
             <Upload className="w-3.5 h-3.5 text-slate-600" />
             <span>Nạp từ file JSON</span>
             <input

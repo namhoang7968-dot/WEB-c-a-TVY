@@ -84,12 +84,12 @@ export default function ContentModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200/90 w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div>
-            <h2 className="text-base font-semibold text-slate-900">
+            <h2 className="text-base font-semibold text-[#0F172A]">
               {isEditing ? 'Chỉnh sửa nội dung' : 'Tạo mới nội dung'}
             </h2>
             <p className="text-xs text-slate-500 mt-0.5 font-normal">
@@ -119,7 +119,7 @@ export default function ContentModal({
                 placeholder="VD: GSA-CH01-STUDY-TikTok"
                 className={`w-full px-3 py-2 rounded-lg border text-xs sm:text-sm font-mono ${
                   errors.code ? 'border-rose-300 bg-rose-50/30' : 'border-slate-200'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500`}
+                } focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800`}
               />
               {errors.code && <p className="text-[11px] text-rose-500 mt-1">{errors.code}</p>}
             </div>
@@ -131,7 +131,7 @@ export default function ContentModal({
               <select
                 value={formData.group}
                 onChange={(e) => setFormData({ ...formData, group: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 font-medium cursor-pointer"
               >
                 <option value="Bài bắt buộc">Bài bắt buộc (Target 8 bài)</option>
                 <option value="Nội dung bổ sung">Nội dung bổ sung</option>
@@ -151,7 +151,7 @@ export default function ContentModal({
               placeholder="VD: Topic: Tuần 1 — Study | Chạy Deadline Thuyết Trình..."
               className={`w-full px-3 py-2 rounded-lg border text-xs sm:text-sm ${
                 errors.topic ? 'border-rose-300 bg-rose-50/30' : 'border-slate-200'
-              } focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500`}
+              } focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800`}
             />
             {errors.topic && <p className="text-[11px] text-rose-500 mt-1">{errors.topic}</p>}
           </div>
@@ -166,7 +166,7 @@ export default function ContentModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Minh họa quy trình sử dụng Gemini để giải quyết bài toán cụ thể..."
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 leading-relaxed"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 leading-relaxed"
             />
           </div>
 
@@ -179,7 +179,7 @@ export default function ContentModal({
               <select
                 value={formData.channel}
                 onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 cursor-pointer"
               >
                 <option value="TikTok">TikTok</option>
                 <option value="Facebook cá nhân">Facebook cá nhân</option>
@@ -198,7 +198,7 @@ export default function ContentModal({
               <select
                 value={formData.format}
                 onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 cursor-pointer"
               >
                 <option value="Video ngắn">Video ngắn (9:16)</option>
                 <option value="Bài viết">Bài viết (Single Post / Text + Ảnh)</option>
@@ -220,7 +220,7 @@ export default function ContentModal({
                 value={formData.scheduledDate}
                 onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
                 placeholder="VD: 22/10/2024"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
               />
             </div>
 
@@ -233,7 +233,7 @@ export default function ContentModal({
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                 placeholder="VD: 23/10/2024"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
               />
             </div>
 
@@ -244,7 +244,7 @@ export default function ContentModal({
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 font-medium cursor-pointer"
               >
                 <option value="Đang làm">Đang làm</option>
                 <option value="Đã đăng">Đã đăng</option>
@@ -263,7 +263,7 @@ export default function ContentModal({
               value={formData.link}
               onChange={(e) => setFormData({ ...formData, link: e.target.value })}
               placeholder="https://tiktok.com/@... hoặc https://facebook.com/..."
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
             />
           </div>
 
@@ -277,7 +277,7 @@ export default function ContentModal({
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="VD: #GSA #GoogleAI #Deadline"
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
             />
           </div>
 
@@ -286,13 +286,13 @@ export default function ContentModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs transition-colors cursor-pointer"
+              className="tactile-btn px-3.5 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs transition-colors cursor-pointer"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-medium text-xs transition-colors shadow-2xs cursor-pointer"
+              className="tactile-btn px-4 py-2 rounded-lg bg-[#0F172A] hover:bg-[#1E293B] text-white font-medium text-xs transition-colors shadow-2xs cursor-pointer border border-slate-800"
             >
               {isEditing ? 'Lưu thay đổi' : 'Tạo nội dung'}
             </button>

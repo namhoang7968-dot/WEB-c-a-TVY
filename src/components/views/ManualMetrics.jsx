@@ -101,19 +101,21 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
   const totalShares = manualShares + socialShares;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Top Action Toolbar */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="tactile-card p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-slate-900 text-sm">Quản lý số liệu bài viết</h3>
-          <p className="text-xs text-slate-500 font-normal">Đồng bộ tự động từ TikTok & Facebook qua Bookmarklet hoặc nhập thủ công</p>
+          <h3 className="font-semibold text-[#0F172A] text-sm sm:text-base">Quản lý số liệu tương tác</h3>
+          <p className="text-xs text-slate-500 font-normal mt-0.5">
+            Đồng bộ dữ liệu thực tế từ TikTok & Facebook qua Bookmarklet hoặc cập nhật thủ công
+          </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={handleSyncTikTok}
             disabled={isSyncing}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-2xs transition-colors cursor-pointer disabled:opacity-60"
+            className="tactile-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F172A] hover:bg-[#1E293B] text-white font-medium text-xs shadow-2xs transition-colors cursor-pointer disabled:opacity-60 border border-slate-800"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
             <span>{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ TikTok'}</span>
@@ -121,74 +123,101 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
 
           <button
             onClick={() => setShowBookmarkletModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer"
+            className="tactile-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-200/90 hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer bg-white"
           >
             <Bookmark className="w-3.5 h-3.5 text-blue-600" />
-            <span>Bookmarklet Quét Số Liệu</span>
+            <span>Bookmarklet quét số liệu</span>
           </button>
         </div>
       </div>
 
-      {/* Top Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
-            <Eye className="w-3.5 h-3.5 text-blue-600" />
-            <span>Tổng lượt xem (Views)</span>
+      {/* Top Metric Cards (Instrument Cluster) */}
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div className="grid grid-cols-2 lg:grid-cols-4">
+          {/* Card 1: Views */}
+          <div className="p-4 sm:p-5 border-r border-b lg:border-b-0 border-slate-200/80">
+            <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+              <Eye className="w-3.5 h-3.5 text-blue-600" />
+              <span>Tổng lượt xem (Views)</span>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-[#0F172A] tracking-tight">
+              {totalViews.toLocaleString('vi-VN')}
+            </p>
+            {socialViews > 0 && (
+              <p className="text-[11px] text-slate-400 mt-1 font-mono">
+                TikTok & FB: {socialViews.toLocaleString('vi-VN')}
+              </p>
+            )}
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900">{totalViews.toLocaleString('vi-VN')}</p>
-          {socialViews > 0 && (
-            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialViews.toLocaleString('vi-VN')}</p>
-          )}
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
-            <Heart className="w-3.5 h-3.5 text-rose-500" />
-            <span>Tổng Tim / Thích (Likes)</span>
+
+          {/* Card 2: Likes */}
+          <div className="p-4 sm:p-5 border-b lg:border-b-0 lg:border-r border-slate-200/80">
+            <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+              <Heart className="w-3.5 h-3.5 text-rose-500" />
+              <span>Tổng Tim / Thích (Likes)</span>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-[#0F172A] tracking-tight">
+              {totalLikes.toLocaleString('vi-VN')}
+            </p>
+            {socialLikes > 0 && (
+              <p className="text-[11px] text-slate-400 mt-1 font-mono">
+                TikTok & FB: {socialLikes.toLocaleString('vi-VN')}
+              </p>
+            )}
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900">{totalLikes.toLocaleString('vi-VN')}</p>
-          {socialLikes > 0 && (
-            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialLikes.toLocaleString('vi-VN')}</p>
-          )}
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
-            <MessageSquare className="w-3.5 h-3.5 text-amber-500" />
-            <span>Bình luận (Comments)</span>
+
+          {/* Card 3: Comments */}
+          <div className="p-4 sm:p-5 border-r lg:border-r border-slate-200/80">
+            <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+              <MessageSquare className="w-3.5 h-3.5 text-amber-500" />
+              <span>Bình luận (Comments)</span>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-[#0F172A] tracking-tight">
+              {totalComments.toLocaleString('vi-VN')}
+            </p>
+            {socialComments > 0 && (
+              <p className="text-[11px] text-slate-400 mt-1 font-mono">
+                TikTok & FB: {socialComments.toLocaleString('vi-VN')}
+              </p>
+            )}
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900">{totalComments.toLocaleString('vi-VN')}</p>
-          {socialComments > 0 && (
-            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialComments.toLocaleString('vi-VN')}</p>
-          )}
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
-            <Share2 className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Chia sẻ (Shares)</span>
+
+          {/* Card 4: Shares */}
+          <div className="p-4 sm:p-5">
+            <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+              <Share2 className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Chia sẻ (Shares)</span>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-[#0F172A] tracking-tight">
+              {totalShares.toLocaleString('vi-VN')}
+            </p>
+            {socialShares > 0 && (
+              <p className="text-[11px] text-slate-400 mt-1 font-mono">
+                TikTok & FB: {socialShares.toLocaleString('vi-VN')}
+              </p>
+            )}
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900">{totalShares.toLocaleString('vi-VN')}</p>
-          {socialShares > 0 && (
-            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialShares.toLocaleString('vi-VN')}</p>
-          )}
         </div>
       </div>
 
       {/* Synced Social Posts Table (social_metrics) */}
       {syncedSocialPosts.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
-          <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-slate-900">Bài viết đã đồng bộ từ TikTok & Facebook</h3>
+                <h3 className="text-sm font-semibold text-[#0F172A]">Bài viết đã đồng bộ từ TikTok & Facebook</h3>
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-mono">
                   {syncedSocialPosts.length} bài
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-normal">Dữ liệu thực tế quét qua Bookmarklet được lưu trực tiếp tại bảng <code className="bg-slate-200/70 px-1 py-0.5 rounded text-slate-800 font-mono">social_metrics</code></p>
+              <p className="text-xs text-slate-500 font-normal mt-0.5">
+                Dữ liệu thực tế quét qua Bookmarklet được lưu trữ tại bảng <code className="bg-slate-200/70 px-1 py-0.5 rounded text-slate-800 font-mono text-[11px]">social_metrics</code>
+              </p>
             </div>
             <button
               onClick={loadSocialMetrics}
-              className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+              className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Tải lại</span>
@@ -197,51 +226,51 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
-              <thead className="bg-slate-50/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200/90">
+              <thead className="bg-slate-50/60 text-xs font-medium text-slate-500 border-b border-slate-200">
                 <tr>
                   <th className="py-3 px-4">Kênh</th>
                   <th className="py-3 px-4">Tiêu đề bài viết / Video</th>
-                  <th className="py-3 px-4">👁️ Lượt xem</th>
-                  <th className="py-3 px-4">❤️ Tim / Thích</th>
-                  <th className="py-3 px-4">💬 Bình luận</th>
-                  <th className="py-3 px-4">↗️ Chia sẻ</th>
+                  <th className="py-3 px-4">Lượt xem</th>
+                  <th className="py-3 px-4">Tim (Likes)</th>
+                  <th className="py-3 px-4">Bình luận</th>
+                  <th className="py-3 px-4">Chia sẻ</th>
                   <th className="py-3 px-4 text-right">Xem link</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-mono text-xs">
                 {syncedSocialPosts.map((post) => (
-                  <tr key={post.id || post.post_id} className="hover:bg-slate-50/75 transition-colors">
-                    <td className="py-3 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold font-sans ${
+                  <tr key={post.id || post.post_id} className="row-tactile transition-colors">
+                    <td className="py-3.5 px-4 font-sans">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium ${
                         post.platform === 'tiktok'
                           ? 'bg-rose-50 text-rose-700 border border-rose-200/60'
                           : 'bg-blue-50 text-blue-700 border border-blue-200/60'
                       }`}>
-                        {post.platform === 'tiktok' ? '🎵 TikTok' : '⚡ Facebook'}
+                        {post.platform === 'tiktok' ? 'TikTok' : 'Facebook'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-sans font-medium text-slate-900 max-w-xs truncate" title={post.title}>
+                    <td className="py-3.5 px-4 font-sans font-medium text-slate-900 max-w-xs truncate" title={post.title}>
                       {post.title || `Bài viết #${post.post_id}`}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-blue-600">
+                    <td className="py-3.5 px-4 font-semibold text-blue-600">
                       {(Number(post.views) || 0).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-rose-600">
+                    <td className="py-3.5 px-4 font-semibold text-rose-600">
                       {(Number(post.likes) || 0).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-amber-600">
+                    <td className="py-3.5 px-4 font-semibold text-amber-600">
                       {(Number(post.comments) || 0).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 font-medium text-slate-600">
+                    <td className="py-3.5 px-4 font-medium text-slate-600">
                       {(Number(post.shares) || 0).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       {post.url ? (
                         <a
                           href={post.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-slate-400 hover:text-blue-600 font-sans text-xs"
+                          className="inline-flex items-center gap-1 text-slate-400 hover:text-blue-600 font-sans text-xs transition-colors"
                         >
                           Mở link <ExternalLink className="w-3 h-3" />
                         </a>
@@ -258,24 +287,24 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
       )}
 
       {/* Manual Content Plan Metrics Table */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
-        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Bảng số liệu 8 bài bắt buộc & Lịch nội dung</h3>
-            <p className="text-xs text-slate-500 font-normal">Cập nhật chỉ số thực tế sau khi đăng bài để báo cáo ban tổ chức</p>
+            <h3 className="text-sm font-semibold text-[#0F172A]">Bảng số liệu 8 bài bắt buộc & Lịch nội dung</h3>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">Cập nhật chỉ số thực tế sau khi đăng bài để đối soát và báo cáo</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
-            <thead className="bg-slate-50/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200/90">
+            <thead className="bg-slate-50/60 text-xs font-medium text-slate-500 border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Mã nội dung</th>
                 <th className="py-3 px-4">Kênh</th>
-                <th className="py-3 px-4">👁️ Lượt xem</th>
-                <th className="py-3 px-4">❤️ Thích</th>
-                <th className="py-3 px-4">💬 Bình luận</th>
-                <th className="py-3 px-4">↗️ Chia sẻ</th>
+                <th className="py-3 px-4">Lượt xem</th>
+                <th className="py-3 px-4">Thích</th>
+                <th className="py-3 px-4">Bình luận</th>
+                <th className="py-3 px-4">Chia sẻ</th>
                 <th className="py-3 px-4">Lưu</th>
                 <th className="py-3 px-4 text-right">Thao tác</th>
               </tr>
@@ -289,8 +318,8 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                   const isEditing = editingId === item?.id;
 
                   return (
-                    <tr key={item?.id || Math.random()} className="hover:bg-slate-50/75 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-slate-900 text-xs">
+                    <tr key={item?.id || Math.random()} className="row-tactile transition-colors">
+                      <td className="py-3.5 px-4 font-semibold text-[#0F172A] text-xs">
                         <span className="font-mono">{item?.code}</span>
                         <span className="block text-[11px] text-slate-400 font-normal truncate max-w-xs">{item?.topic}</span>
                       </td>
@@ -303,7 +332,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                             type="number"
                             value={tempRow.views ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, views: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
+                            className="input-tactile w-20 px-2 py-1 text-xs rounded-md font-mono"
                           />
                         ) : (
                           <span className="font-medium text-slate-900 font-mono">{(metric?.views || 0).toLocaleString()}</span>
@@ -317,7 +346,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                             type="number"
                             value={tempRow.likes ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, likes: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
+                            className="input-tactile w-20 px-2 py-1 text-xs rounded-md font-mono"
                           />
                         ) : (
                           <span className="font-medium text-slate-900 font-mono">{(metric?.likes || 0).toLocaleString()}</span>
@@ -331,7 +360,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                             type="number"
                             value={tempRow.comments ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, comments: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
+                            className="input-tactile w-20 px-2 py-1 text-xs rounded-md font-mono"
                           />
                         ) : (
                           <span className="font-medium text-slate-900 font-mono">{(metric?.comments || 0).toLocaleString()}</span>
@@ -345,7 +374,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                             type="number"
                             value={tempRow.shares ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, shares: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
+                            className="input-tactile w-20 px-2 py-1 text-xs rounded-md font-mono"
                           />
                         ) : (
                           <span className="font-medium text-slate-900 font-mono">{(metric?.shares || 0).toLocaleString()}</span>
@@ -359,7 +388,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                             type="number"
                             value={tempRow.saves ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, saves: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
+                            className="input-tactile w-20 px-2 py-1 text-xs rounded-md font-mono"
                           />
                         ) : (
                           <span className="font-medium text-slate-900 font-mono">{(metric?.saves || 0).toLocaleString()}</span>
@@ -372,7 +401,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                           <div className="inline-flex items-center gap-1.5">
                             <button
                               onClick={() => handleSaveEdit(item?.code)}
-                              className="bg-blue-600 text-white px-2.5 py-1 rounded-md text-xs font-medium hover:bg-blue-700 cursor-pointer shadow-2xs"
+                              className="tactile-btn bg-[#0F172A] text-white px-2.5 py-1 rounded-md text-xs font-medium hover:bg-slate-800 cursor-pointer shadow-2xs"
                             >
                               Lưu
                             </button>

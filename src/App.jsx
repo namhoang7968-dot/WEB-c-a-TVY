@@ -27,6 +27,7 @@ export default function App() {
   const [contents, setContents] = useState(() => contentService.getLocalCache() || []);
   const [stats, setStats] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -358,17 +359,19 @@ export default function App() {
 
   return (
     <ErrorBoundary fallbackTitle="Ứng dụng gặp sự cố giao diện">
-      <div className="flex min-h-screen bg-[#F8FAFC]">
+      <div className="flex min-h-screen bg-[var(--color-paper)] text-[#0F172A]">
         {/* Sidebar (Left) */}
         <Sidebar
           currentTab={currentTab}
           onSelectTab={setCurrentTab}
           stats={stats}
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
         />
 
         {/* Main Content Area (Right) */}
         <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-          <main className="flex-1 p-6 lg:p-8 max-w-7xl w-full mx-auto">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
             {/* Header */}
             <Header
               breadcrumb={headerInfo.breadcrumb}
@@ -378,6 +381,7 @@ export default function App() {
               showCreateButton={headerInfo.showCreateButton}
               actionButtonLabel={headerInfo.actionButtonLabel}
               storageStatus="Đồng bộ Supabase trực tuyến"
+              onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
             />
 
             {/* Tab Views wrapped in ErrorBoundary per tab */}

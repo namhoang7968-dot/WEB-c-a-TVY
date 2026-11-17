@@ -47,9 +47,9 @@ export default function ContentCalendar({
   };
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Filter and Action Toolbar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 bg-white p-2.5 sm:p-3 rounded-xl border border-slate-200/80 shadow-2xs">
+      <div className="tactile-card p-3 sm:p-4 rounded-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Search input */}
         <div className="relative flex-1 min-w-[240px]">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -58,7 +58,7 @@ export default function ContentCalendar({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm theo mã, chủ đề, kênh..."
-            className="w-full bg-slate-50/60 hover:bg-slate-50 focus:bg-white text-xs sm:text-sm text-slate-800 placeholder-slate-400 pl-9 pr-8 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            className="input-tactile w-full text-xs sm:text-sm text-slate-800 placeholder-slate-400 pl-9 pr-8 py-2 rounded-lg"
           />
           {searchTerm && (
             <button
@@ -71,13 +71,13 @@ export default function ContentCalendar({
         </div>
 
         {/* Dropdowns & Export Button */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Status Filter */}
           <div className="relative">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="appearance-none bg-white hover:bg-slate-50/80 text-xs sm:text-sm font-medium text-slate-700 pl-3 pr-8 py-2 rounded-lg border border-slate-200 hover:border-slate-300 shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer min-w-[120px] transition-colors"
+              className="input-tactile appearance-none text-xs sm:text-sm font-medium text-slate-700 pl-3 pr-8 py-2 rounded-lg cursor-pointer min-w-[130px]"
             >
               <option value="Tất cả">Tất cả trạng thái</option>
               <option value="Đang làm">Đang làm</option>
@@ -92,7 +92,7 @@ export default function ContentCalendar({
             <select
               value={groupFilter}
               onChange={(e) => setGroupFilter(e.target.value)}
-              className="appearance-none bg-white hover:bg-slate-50/80 text-xs sm:text-sm font-medium text-slate-700 pl-3 pr-8 py-2 rounded-lg border border-slate-200 hover:border-slate-300 shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer min-w-[130px] transition-colors"
+              className="input-tactile appearance-none text-xs sm:text-sm font-medium text-slate-700 pl-3 pr-8 py-2 rounded-lg cursor-pointer min-w-[135px]"
             >
               <option value="Tất cả nhóm">Tất cả nhóm</option>
               <option value="Bài bắt buộc">Bài bắt buộc</option>
@@ -104,7 +104,7 @@ export default function ContentCalendar({
           {/* Export CSV Button */}
           <button
             onClick={() => onExportCSV(filteredContents)}
-            className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-slate-200 hover:border-slate-300 shadow-2xs transition-colors cursor-pointer"
+            className="tactile-btn inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg border border-slate-200/90 hover:border-slate-300 shadow-2xs transition-colors cursor-pointer"
             title="Tải về file Excel CSV"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-slate-500" />
@@ -113,18 +113,18 @@ export default function ContentCalendar({
         </div>
       </div>
 
-      {/* Main Table Container */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
+      {/* Main Table Container (Hallmark Editorial Table with Sentence-Case Headers) */}
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[860px]">
             <thead>
-              <tr className="border-b border-slate-200/90 bg-slate-50/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                <th className="py-3 px-4 w-[200px] whitespace-nowrap">MÃ / NHÓM</th>
-                <th className="py-3 px-4 min-w-[320px]">CHỦ ĐỀ & MỤC TIÊU</th>
-                <th className="py-3 px-4 w-[160px] whitespace-nowrap">KÊNH / ĐỊNH DẠNG</th>
-                <th className="py-3 px-4 w-[140px] whitespace-nowrap">NGÀY DỰ KIẾN</th>
-                <th className="py-3 px-4 w-[125px] whitespace-nowrap">TRẠNG THÁI</th>
-                <th className="py-3 px-4 w-[90px] text-right whitespace-nowrap">THAO TÁC</th>
+              <tr className="border-b border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-500">
+                <th className="py-3 px-4 w-[200px] whitespace-nowrap">Mã / Nhóm</th>
+                <th className="py-3 px-4 min-w-[320px]">Chủ đề & Mục tiêu</th>
+                <th className="py-3 px-4 w-[160px] whitespace-nowrap">Kênh / Định dạng</th>
+                <th className="py-3 px-4 w-[140px] whitespace-nowrap">Ngày dự kiến</th>
+                <th className="py-3 px-4 w-[125px] whitespace-nowrap">Trạng thái</th>
+                <th className="py-3 px-4 w-[95px] text-right whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
@@ -132,11 +132,11 @@ export default function ContentCalendar({
                 filteredContents.map((item) => (
                   <tr
                     key={item.id}
-                    className="hover:bg-slate-50/75 transition-colors group"
+                    className="row-tactile transition-colors group"
                   >
                     {/* MÃ / NHÓM */}
                     <td className="py-3.5 px-4 align-top whitespace-nowrap">
-                      <div className="font-semibold text-slate-900 font-mono text-xs sm:text-sm tracking-tight">
+                      <div className="font-semibold text-[#0F172A] font-mono text-xs sm:text-sm">
                         {item.code}
                       </div>
                       <div className="mt-1">
@@ -154,7 +154,7 @@ export default function ContentCalendar({
 
                     {/* CHỦ ĐỀ & MỤC TIÊU */}
                     <td className="py-3.5 px-4 align-top">
-                      <div className="font-semibold text-slate-900 text-xs sm:text-sm leading-snug">
+                      <div className="font-semibold text-[#0F172A] text-xs sm:text-sm leading-snug">
                         {item.topic}
                       </div>
                       {item.description && (
@@ -174,7 +174,7 @@ export default function ContentCalendar({
 
                     {/* KÊNH / ĐỊNH DẠNG */}
                     <td className="py-3.5 px-4 align-top">
-                      <div className="font-medium text-slate-900 text-xs sm:text-sm">
+                      <div className="font-medium text-[#0F172A] text-xs sm:text-sm">
                         {item.channel}
                       </div>
                       <div className="text-xs text-slate-500 mt-0.5">
@@ -184,7 +184,7 @@ export default function ContentCalendar({
 
                     {/* NGÀY DỰ KIẾN */}
                     <td className="py-3.5 px-4 align-top">
-                      <div className="text-xs sm:text-sm font-medium text-slate-900 font-mono">
+                      <div className="text-xs sm:text-sm font-medium text-[#0F172A] font-mono">
                         {item.scheduledDate}
                       </div>
                       {item.deadline && (
@@ -221,13 +221,13 @@ export default function ContentCalendar({
                       <div className="inline-flex items-center gap-1">
                         <button
                           onClick={() => onEdit(item)}
-                          className="text-xs font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-100 px-2 py-1 rounded transition-colors cursor-pointer"
+                          className="tactile-btn text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded transition-colors cursor-pointer"
                         >
                           Sửa
                         </button>
                         <button
                           onClick={() => onDelete(item)}
-                          className="text-xs font-medium text-slate-400 hover:text-rose-600 hover:bg-rose-50 px-2 py-1 rounded transition-colors cursor-pointer"
+                          className="tactile-btn text-xs font-medium text-slate-400 hover:text-rose-600 hover:bg-rose-50 px-2 py-1 rounded transition-colors cursor-pointer"
                         >
                           Xóa
                         </button>
@@ -242,7 +242,7 @@ export default function ContentCalendar({
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
                         <FilterX className="w-5 h-5" />
                       </div>
-                      <p className="text-slate-800 font-semibold text-sm">
+                      <p className="text-[#0F172A] font-semibold text-sm">
                         Không tìm thấy nội dung phù hợp
                       </p>
                       <p className="text-slate-500 text-xs mt-1 mb-3.5">
@@ -250,7 +250,7 @@ export default function ContentCalendar({
                       </p>
                       <button
                         onClick={resetFilters}
-                        className="text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200/60 transition-colors cursor-pointer"
+                        className="tactile-btn text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200/60 transition-colors cursor-pointer"
                       >
                         Đặt lại bộ lọc
                       </button>

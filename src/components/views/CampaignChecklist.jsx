@@ -38,15 +38,15 @@ export default function CampaignChecklist({ onShowToast }) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Progress overview */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
+      <div className="tactile-card rounded-xl p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Tiến độ Checklist Chiến Dịch GSA</h3>
-            <p className="text-xs text-slate-500 font-normal">Đã hoàn thành {completedCount} trên tổng số {totalCount} đầu mục</p>
+            <h3 className="text-sm sm:text-base font-semibold text-[#0F172A]">Tiến độ checklist chiến dịch GSA</h3>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">Đã hoàn thành {completedCount} trên tổng số {totalCount} đầu mục</p>
           </div>
-          <span className="text-xl font-bold font-mono text-blue-600">{percent}%</span>
+          <span className="text-2xl font-bold font-mono text-blue-600">{percent}%</span>
         </div>
         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <div
@@ -57,18 +57,18 @@ export default function CampaignChecklist({ onShowToast }) {
       </div>
 
       {/* Add new task bar */}
-      <form onSubmit={handleAdd} className="bg-white p-2.5 sm:p-3 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row gap-2">
+      <form onSubmit={handleAdd} className="tactile-card p-3 rounded-xl flex flex-col sm:flex-row gap-2.5">
         <input
           type="text"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           placeholder="Thêm nhiệm vụ mới cần làm..."
-          className="flex-1 px-3.5 py-2 text-xs sm:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          className="flex-1 px-3.5 py-2 text-xs sm:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
         />
         <select
           value={newTaskCategory}
           onChange={(e) => setNewTaskCategory(e.target.value)}
-          className="px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white focus:outline-none"
+          className="px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white focus:outline-none cursor-pointer"
         >
           <option value="Sản xuất nội dung">Sản xuất nội dung</option>
           <option value="Onboarding">Onboarding</option>
@@ -77,7 +77,7 @@ export default function CampaignChecklist({ onShowToast }) {
         </select>
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+          className="tactile-btn bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs border border-slate-800"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Thêm việc</span>
@@ -85,13 +85,13 @@ export default function CampaignChecklist({ onShowToast }) {
       </form>
 
       {/* Task list */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs divide-y divide-slate-100 overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs divide-y divide-slate-100 overflow-hidden">
         {safeItems.length > 0 ? (
           safeItems.map((item) => (
             <div
               key={item?.id || Math.random()}
               className={`p-3.5 sm:p-4 flex items-center justify-between gap-3 transition-colors ${
-                item?.completed ? 'bg-slate-50/50' : 'hover:bg-slate-50/75'
+                item?.completed ? 'bg-slate-50/50' : 'hover:bg-slate-50/60'
               }`}
             >
               <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -100,36 +100,38 @@ export default function CampaignChecklist({ onShowToast }) {
                   className="mt-0.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0 cursor-pointer"
                 >
                   {item?.completed ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-50" />
                   ) : (
-                    <Square className="w-5 h-5 text-slate-300" />
+                    <Square className="w-4 h-4" />
                   )}
                 </button>
                 <div className="min-w-0">
-                  <p className={`text-xs sm:text-sm ${item?.completed ? 'line-through text-slate-400 font-normal' : 'font-medium text-slate-900'}`}>
-                    {item?.title || 'Nhiệm vụ'}
+                  <p className={`text-xs sm:text-sm font-medium ${item?.completed ? 'line-through text-slate-400' : 'text-[#0F172A]'}`}>
+                    {item?.title}
                   </p>
-                  <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
-                    <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium text-[10px]">
-                      {item?.category || 'Chung'}
+                  <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
+                    <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200/60 font-sans">
+                      {item?.category}
                     </span>
-                    <span className="font-mono">• Hạn: {item?.deadline || 'Không hạn'}</span>
+                    {item?.deadline && (
+                      <span className="font-mono">Hạn chót: {item.deadline}</span>
+                    )}
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => handleDelete(item?.id)}
-                className="text-slate-300 hover:text-rose-600 p-1.5 rounded transition-colors cursor-pointer"
-                title="Xóa nhiệm vụ"
+                className="text-slate-300 hover:text-rose-500 p-1 transition-colors cursor-pointer"
+                title="Xóa đầu việc"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           ))
         ) : (
           <div className="p-8 text-center text-xs text-slate-400">
-            Chưa có đầu việc nào trong checklist
+            Checklist trống. Hãy thêm các đầu việc cần làm của chiến dịch!
           </div>
         )}
       </div>

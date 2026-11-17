@@ -6,9 +6,9 @@ export default function ProfileGrowth() {
   const safeChannels = Array.isArray(channels) ? channels : [];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {safeChannels.map((ch, idx) => {
           const current = Number(ch?.currentFollowers) || 0;
           const start = Number(ch?.startFollowers) || 0;
@@ -17,18 +17,18 @@ export default function ProfileGrowth() {
           const progress = Math.min(100, Math.round((current / target) * 100));
 
           return (
-            <div key={ch?.name || idx} className="bg-white p-4.5 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col justify-between">
+            <div key={ch?.name || idx} className="tactile-card p-5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-semibold text-slate-900 text-sm">{ch?.name || 'Kênh'}</span>
+                  <span className="font-semibold text-[#0F172A] text-sm">{ch?.name || 'Kênh'}</span>
                   <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/60 font-medium px-2 py-0.5 rounded-full font-mono">
-                    +{gained.toLocaleString()} từ đầu chiến dịch
+                    +{gained.toLocaleString()} chiến dịch
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 font-mono mb-3">{ch?.handle || ''}</p>
 
                 <div className="flex items-baseline justify-between mb-1.5 font-mono">
-                  <span className="text-2xl font-bold text-slate-900">{current.toLocaleString()}</span>
+                  <span className="text-2xl sm:text-3xl font-bold font-mono text-[#0F172A] tracking-tight">{current.toLocaleString()}</span>
                   <span className="text-xs text-slate-400 font-sans">Mục tiêu: {target.toLocaleString()}</span>
                 </div>
 
@@ -47,9 +47,9 @@ export default function ProfileGrowth() {
       </div>
 
       {/* Strategies Box */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
-        <h3 className="font-semibold text-slate-900 text-sm mb-3">Chiến lược phát triển kênh cá nhân</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs text-slate-600">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6">
+        <h3 className="font-semibold text-[#0F172A] text-sm mb-3">Chiến lược phát triển kênh cá nhân</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
           <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70">
             <h4 className="font-semibold text-slate-900 mb-1">1. Đính kèm Bio Link có UTM chuyên nghiệp</h4>
             <p className="leading-relaxed text-slate-500">

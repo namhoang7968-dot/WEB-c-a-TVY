@@ -10,13 +10,13 @@ export default function DeleteConfirmModal({
   if (!isOpen || !item) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 w-full max-w-sm overflow-hidden p-5 sm:p-6 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200/90 w-full max-w-sm overflow-hidden p-5 sm:p-6 text-center">
         <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-3">
           <Trash2 className="w-5 h-5" />
         </div>
 
-        <h3 className="text-sm sm:text-base font-semibold text-slate-900">
+        <h3 className="text-sm sm:text-base font-semibold text-[#0F172A]">
           Xác nhận xóa nội dung?
         </h3>
 
@@ -33,13 +33,13 @@ export default function DeleteConfirmModal({
         <div className="mt-5 flex items-center justify-center gap-2.5">
           <button
             onClick={onClose}
-            className="flex-1 px-3.5 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs transition-colors cursor-pointer"
+            className="tactile-btn flex-1 px-3.5 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs transition-colors cursor-pointer"
           >
             Hủy bỏ
           </button>
           <button
             onClick={() => onConfirm(item.id)}
-            className="flex-1 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 active:scale-[0.99] text-white font-medium text-xs transition-colors shadow-2xs cursor-pointer"
+            className="tactile-btn flex-1 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 active:scale-[0.99] text-white font-medium text-xs transition-colors shadow-2xs cursor-pointer"
           >
             Xác nhận xóa
           </button>

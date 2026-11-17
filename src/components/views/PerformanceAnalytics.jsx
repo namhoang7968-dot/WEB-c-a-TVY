@@ -10,7 +10,8 @@ import {
   PieChart as PieIcon,
   Eye,
   Heart,
-  MessageSquare
+  MessageSquare,
+  Sparkles
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -29,7 +30,7 @@ import {
 } from 'recharts';
 import BookmarkletModal from '../BookmarkletModal';
 
-const CHART_PALETTE = ['#2563EB', '#EC4899', '#F59E0B', '#0D9488', '#6366F1', '#64748B'];
+const CHART_PALETTE = ['#1D4ED8', '#E11D48', '#D97706', '#059669', '#475569'];
 
 export default function PerformanceAnalytics({ contents = [], onShowToast }) {
   const [metrics, setMetrics] = useState(() => metricsService.get() || []);
@@ -129,27 +130,27 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Top action toolbar */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="tactile-card p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-slate-900 text-sm">Phân tích hiệu quả đa kênh</h3>
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 font-sans">
+            <h3 className="font-semibold text-[#0F172A] text-sm sm:text-base">Phân tích hiệu quả đa kênh</h3>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
               TikTok & Facebook
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5 font-normal">
-            Dữ liệu kết nối tự động với kênh TikTok @thuyvy.risetoshine và Facebook cá nhân
+          <p className="text-xs text-slate-500 mt-1 font-normal">
+            Dữ liệu kết nối tự động từ TikTok @thuyvy.risetoshine và Facebook cá nhân
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Sync TikTok Button */}
           <button
             onClick={handleSyncTikTok}
             disabled={isSyncing}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-2xs transition-colors cursor-pointer disabled:opacity-60"
+            className="tactile-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F172A] hover:bg-[#1E293B] text-white font-medium text-xs shadow-2xs transition-colors cursor-pointer disabled:opacity-60 border border-slate-800"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
             <span>{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ TikTok'}</span>
@@ -158,43 +159,43 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
           {/* Bookmarklet instructions button */}
           <button
             onClick={() => setShowBookmarkletModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer"
+            className="tactile-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer bg-white"
           >
             <Bookmark className="w-3.5 h-3.5 text-blue-600" />
-            <span>Bookmarklet Quét Số Liệu</span>
+            <span>Bookmarklet quét số liệu</span>
           </button>
         </div>
       </div>
 
       {/* Recharts Growth Chart Area */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div>
-            <h4 className="font-semibold text-slate-900 text-sm">Biểu đồ 3 chỉ số: Lượt xem, Tim (Likes) & Bình luận</h4>
-            <p className="text-xs text-slate-500 font-normal">Trực quan hóa diễn biến theo từng bài viết và nền tảng</p>
+            <h4 className="font-semibold text-[#0F172A] text-sm sm:text-base">Diễn biến 3 chỉ số tương tác</h4>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">Lượt xem, Tim (Likes) và Bình luận chi tiết từng nội dung</p>
           </div>
 
-          <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200/60 self-start sm:self-auto">
+          <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-lg border border-slate-200/60 self-start sm:self-auto">
             <button
               onClick={() => setActiveChartTab('bar')}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                activeChartTab === 'bar' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                activeChartTab === 'bar' ? 'bg-white text-slate-900 shadow-2xs font-semibold' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Cột (3 chỉ số)
             </button>
             <button
               onClick={() => setActiveChartTab('area')}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                activeChartTab === 'area' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                activeChartTab === 'area' ? 'bg-white text-slate-900 shadow-2xs font-semibold' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Vùng tương tác
             </button>
             <button
               onClick={() => setActiveChartTab('pie')}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                activeChartTab === 'pie' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                activeChartTab === 'pie' ? 'bg-white text-slate-900 shadow-2xs font-semibold' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Tỷ trọng kênh
@@ -202,24 +203,24 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
           </div>
         </div>
 
-        {/* Charts Container */}
+        {/* Charts Container with Hallmark Solid 1px Hairline Grid */}
         <div className="h-72 w-full">
           {activeChartTab === 'bar' && (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={allChartData} margin={{ top: 10, right: 20, left: 0, bottom: 25 }}>
-                <CartesianGrid strokeDasharray="2 2" stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="name" angle={-15} textAnchor="end" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: '#e2e8f0' }} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: '#e2e8f0' }} tickLine={false} />
+                <CartesianGrid stroke="#E5E7EB" vertical={false} />
+                <XAxis dataKey="name" angle={-15} textAnchor="end" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={{ stroke: '#E5E7EB' }} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={{ stroke: '#E5E7EB' }} tickLine={false} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const data = payload[0].payload;
                       return (
-                        <div className="bg-slate-900 text-white p-3 rounded-lg text-xs shadow-xl border border-slate-800 space-y-1">
+                        <div className="bg-[#090D16] text-white p-3 rounded-lg text-xs shadow-xl border border-slate-800 space-y-1">
                           <p className="font-semibold truncate max-w-xs text-slate-200">{data.fullTitle}</p>
-                          <p className="text-blue-300 font-mono">👁️ Lượt xem: {(data.views || 0).toLocaleString()}</p>
-                          <p className="text-pink-300 font-mono">❤️ Tim (Likes): {(data.likes || 0).toLocaleString()}</p>
-                          <p className="text-amber-300 font-mono">💬 Bình luận: {(data.comments || 0).toLocaleString()}</p>
+                          <p className="text-blue-400 font-mono">Lượt xem: {(data.views || 0).toLocaleString()}</p>
+                          <p className="text-rose-400 font-mono">Tim (Likes): {(data.likes || 0).toLocaleString()}</p>
+                          <p className="text-amber-400 font-mono">Bình luận: {(data.comments || 0).toLocaleString()}</p>
                           <p className="text-slate-400 font-mono text-[10px]">Kênh: {data.channel}</p>
                         </div>
                       );
@@ -228,9 +229,9 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
                   }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                <Bar dataKey="views" name="Lượt xem (Views)" fill="#2563EB" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="likes" name="Tim (Likes)" fill="#EC4899" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="comments" name="Bình luận (Comments)" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="views" name="Lượt xem (Views)" fill="#1D4ED8" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="likes" name="Tim (Likes)" fill="#E11D48" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="comments" name="Bình luận (Comments)" fill="#D97706" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -240,31 +241,31 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
               <AreaChart data={allChartData} margin={{ top: 10, right: 20, left: 0, bottom: 25 }}>
                 <defs>
                   <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#1D4ED8" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#1D4ED8" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorLikes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#EC4899" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#EC4899" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#E11D48" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#E11D48" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorComments" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#D97706" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#D97706" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="2 2" stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="name" angle={-15} textAnchor="end" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: '#e2e8f0' }} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: '#e2e8f0' }} tickLine={false} />
+                <CartesianGrid stroke="#E5E7EB" vertical={false} />
+                <XAxis dataKey="name" angle={-15} textAnchor="end" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={{ stroke: '#E5E7EB' }} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={{ stroke: '#E5E7EB' }} tickLine={false} />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const data = payload[0].payload;
                       return (
-                        <div className="bg-slate-900 text-white p-3 rounded-lg text-xs shadow-xl border border-slate-800 space-y-1">
-                          <p className="font-semibold truncate max-w-xs">{data.fullTitle}</p>
-                          <p className="text-blue-300 font-mono">👁️ Lượt xem: {(data.views || 0).toLocaleString()}</p>
-                          <p className="text-pink-300 font-mono">❤️ Tim: {(data.likes || 0).toLocaleString()}</p>
-                          <p className="text-amber-300 font-mono">💬 Bình luận: {(data.comments || 0).toLocaleString()}</p>
+                        <div className="bg-[#090D16] text-white p-3 rounded-lg text-xs shadow-xl border border-slate-800 space-y-1">
+                          <p className="font-semibold truncate max-w-xs text-slate-200">{data.fullTitle}</p>
+                          <p className="text-blue-400 font-mono">Lượt xem: {(data.views || 0).toLocaleString()}</p>
+                          <p className="text-rose-400 font-mono">Tim: {(data.likes || 0).toLocaleString()}</p>
+                          <p className="text-amber-400 font-mono">Bình luận: {(data.comments || 0).toLocaleString()}</p>
                         </div>
                       );
                     }
@@ -272,9 +273,9 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
                   }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                <Area type="monotone" dataKey="views" name="Lượt xem (Views)" stroke="#2563EB" strokeWidth={1.5} fillOpacity={1} fill="url(#colorViews)" />
-                <Area type="monotone" dataKey="likes" name="Tim / Thích (Likes)" stroke="#EC4899" strokeWidth={1.5} fillOpacity={1} fill="url(#colorLikes)" />
-                <Area type="monotone" dataKey="comments" name="Bình luận (Comments)" stroke="#F59E0B" strokeWidth={1.5} fillOpacity={1} fill="url(#colorComments)" />
+                <Area type="monotone" dataKey="views" name="Lượt xem (Views)" stroke="#1D4ED8" strokeWidth={1.5} fillOpacity={1} fill="url(#colorViews)" />
+                <Area type="monotone" dataKey="likes" name="Tim (Likes)" stroke="#E11D48" strokeWidth={1.5} fillOpacity={1} fill="url(#colorLikes)" />
+                <Area type="monotone" dataKey="comments" name="Bình luận (Comments)" stroke="#D97706" strokeWidth={1.5} fillOpacity={1} fill="url(#colorComments)" />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -289,7 +290,7 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
                   labelLine={false}
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   outerRadius={95}
-                  innerRadius={45}
+                  innerRadius={50}
                   dataKey="value"
                   paddingAngle={2}
                 >
@@ -306,10 +307,10 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
       </div>
 
       {/* Top 3 Leaderboard */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-5">
-        <div className="flex items-center gap-2 mb-3.5">
+      <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6">
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
           <Award className="w-4 h-4 text-amber-500" />
-          <h3 className="text-sm font-semibold text-slate-900">Top bài có hiệu quả cao nhất</h3>
+          <h3 className="text-sm font-semibold text-[#0F172A]">Top nội dung có hiệu quả cao nhất</h3>
         </div>
 
         {top3.length > 0 ? (
@@ -317,14 +318,14 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
             {top3.map((item, idx) => (
               <div
                 key={item?.id || idx}
-                className={`p-4 rounded-xl border relative transition-colors ${
+                className={`p-4 rounded-xl border relative transition-all tactile-card ${
                   idx === 0
-                    ? 'border-amber-200/80 bg-amber-50/20 shadow-2xs'
-                    : 'border-slate-200/80 bg-slate-50/40'
+                    ? 'border-amber-200/80 bg-amber-50/15'
+                    : 'border-slate-200/80 bg-slate-50/30'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold font-mono ${
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono ${
                     idx === 0 ? 'bg-amber-400 text-slate-950' : 'bg-slate-200 text-slate-700'
                   }`}>
                     {idx + 1}
@@ -336,15 +337,15 @@ export default function PerformanceAnalytics({ contents = [], onShowToast }) {
                 </p>
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200/60 text-center font-mono text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-sans block">👁️ Xem</span>
+                    <span className="text-[10px] text-slate-400 font-sans block">Lượt xem</span>
                     <span className="font-semibold text-blue-600">{(item?.views || 0).toLocaleString()}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-sans block">❤️ Tim</span>
+                    <span className="text-[10px] text-slate-400 font-sans block">Tim / Thích</span>
                     <span className="font-semibold text-rose-600">{(item?.likes || 0).toLocaleString()}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-sans block">💬 Bình luận</span>
+                    <span className="text-[10px] text-slate-400 font-sans block">Bình luận</span>
                     <span className="font-semibold text-amber-600">{(item?.comments || 0).toLocaleString()}</span>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ideaService } from '../../services/otherDataService';
-import { Plus, ArrowRight, Trash2 } from 'lucide-react';
+import { Plus, ArrowRight, Trash2, Lightbulb } from 'lucide-react';
 
 export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
   const [ideas, setIdeas] = useState(() => ideaService.get() || []);
@@ -53,16 +53,18 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Header toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+      <div className="tactile-card p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-slate-900 text-sm">Kho lưu trữ ý tưởng sáng tạo</h3>
-          <p className="text-xs text-slate-500 font-normal">Ghi lại ý tưởng mới, phân loại và chuyển đổi thành bài đăng chính thức</p>
+          <h3 className="font-semibold text-[#0F172A] text-sm sm:text-base">Kho lưu trữ ý tưởng sáng tạo</h3>
+          <p className="text-xs text-slate-500 font-normal mt-0.5">
+            Ghi lại ý tưởng mới, phân loại kênh và chuyển đổi thành bài đăng trong lịch nội dung
+          </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg shadow-2xs transition-colors cursor-pointer self-start sm:self-auto"
+          className="tactile-btn inline-flex items-center gap-1.5 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-lg shadow-2xs transition-colors cursor-pointer self-start sm:self-auto border border-slate-800"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>+ Thêm ý tưởng</span>
@@ -70,35 +72,35 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
       </div>
 
       {/* Idea Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {safeIdeas.length > 0 ? (
           safeIdeas.map((idea) => {
             const tags = Array.isArray(idea?.tags) ? idea.tags : [];
             return (
               <div
                 key={idea?.id || Math.random()}
-                className="bg-white rounded-xl border border-slate-200/80 shadow-2xs p-4.5 flex flex-col justify-between hover:border-slate-300 transition-colors"
+                className="tactile-card rounded-xl p-4 sm:p-5 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusColors[idea?.status] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                  <div className="flex items-center justify-between gap-2 mb-2.5">
+                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${statusColors[idea?.status] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
                       {idea?.status || 'Ý tưởng mới'}
                     </span>
-                    <span className="text-xs text-slate-400 font-normal">{idea?.channel || 'TikTok'}</span>
+                    <span className="text-xs text-slate-400 font-medium">{idea?.channel || 'TikTok'}</span>
                   </div>
 
-                  <h4 className="font-semibold text-slate-900 text-xs sm:text-sm mb-1.5 leading-snug">
+                  <h4 className="font-semibold text-[#0F172A] text-sm mb-1.5 leading-snug">
                     {idea?.title || 'Ý tưởng chưa đặt tên'}
                   </h4>
 
                   {idea?.notes && (
-                    <p className="text-xs text-slate-500 mb-3 leading-relaxed font-normal">
+                    <p className="text-xs text-slate-500 mb-3.5 leading-relaxed font-normal">
                       {idea.notes}
                     </p>
                   )}
 
                   {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
+                    <div className="flex flex-wrap gap-1.5 mb-3.5">
                       {tags.map((tag, i) => (
                         <span key={i} className="text-[10px] font-mono bg-slate-50 border border-slate-200/80 text-slate-600 px-1.5 py-0.5 rounded">
                           #{tag}
@@ -108,7 +110,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                   )}
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between">
                   <button
                     onClick={() => handleDeleteIdea(idea?.id)}
                     className="text-xs text-slate-400 hover:text-rose-600 font-medium p-1 transition-colors cursor-pointer"
@@ -119,9 +121,9 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
 
                   <button
                     onClick={() => onConvertIdeaToContent?.(idea)}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50/70 hover:bg-blue-100 px-2.5 py-1 rounded-md border border-blue-200/60 transition-colors cursor-pointer"
+                    className="tactile-btn inline-flex items-center gap-1 text-xs font-medium text-slate-700 hover:text-[#0F172A] bg-slate-100 hover:bg-slate-200/80 px-3 py-1.5 rounded-md border border-slate-200 transition-colors cursor-pointer"
                   >
-                    <span>Chuyển vào lịch đăng</span>
+                    <span>Chuyển vào lịch</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -129,7 +131,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
             );
           })
         ) : (
-          <div className="col-span-full bg-white p-8 rounded-xl border border-slate-200/80 text-center text-xs text-slate-400">
+          <div className="col-span-full bg-white p-10 rounded-xl border border-slate-200/90 text-center text-xs text-slate-400">
             Chưa có ý tưởng nào. Hãy nhấn "+ Thêm ý tưởng" để bắt đầu!
           </div>
         )}
@@ -137,9 +139,9 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
 
       {/* Add Idea Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 w-full max-w-lg p-5 sm:p-6">
-            <h3 className="text-base font-bold text-slate-900 mb-4">Thêm ý tưởng nội dung mới</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200/90 w-full max-w-lg p-5 sm:p-6">
+            <h3 className="text-base font-bold text-[#0F172A] mb-4">Thêm ý tưởng nội dung mới</h3>
             <form onSubmit={handleAddIdea} className="space-y-3.5 text-xs sm:text-sm">
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1">Tiêu đề ý tưởng *</label>
@@ -149,7 +151,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                   value={newIdea.title}
                   onChange={(e) => setNewIdea({ ...newIdea, title: e.target.value })}
                   placeholder="VD: Bí quyết tóm tắt tài liệu 50 trang bằng Gemini..."
-                  className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
                 />
               </div>
 
@@ -159,7 +161,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                   <select
                     value={newIdea.channel}
                     onChange={(e) => setNewIdea({ ...newIdea, channel: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm bg-white border-slate-200 focus:outline-none"
+                    className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm bg-white border-slate-200 focus:outline-none cursor-pointer"
                   >
                     <option value="TikTok">TikTok</option>
                     <option value="Facebook cá nhân">Facebook cá nhân</option>
@@ -172,7 +174,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                   <select
                     value={newIdea.status}
                     onChange={(e) => setNewIdea({ ...newIdea, status: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm bg-white border-slate-200 focus:outline-none"
+                    className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm bg-white border-slate-200 focus:outline-none cursor-pointer"
                   >
                     <option value="Ý tưởng mới">Ý tưởng mới</option>
                     <option value="Đang ấp ủ">Đang ấp ủ</option>
@@ -188,7 +190,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                   value={newIdea.notes}
                   onChange={(e) => setNewIdea({ ...newIdea, notes: e.target.value })}
                   placeholder="Cách triển khai, kịch bản sơ bộ..."
-                  className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
                 />
               </div>
 
@@ -199,7 +201,7 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                   value={newIdea.tags}
                   onChange={(e) => setNewIdea({ ...newIdea, tags: e.target.value })}
                   placeholder="GSA, Study, Prompt"
-                  className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-mono"
+                  className="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm border-slate-200 focus:outline-none font-mono"
                 />
               </div>
 
@@ -207,13 +209,13 @@ export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
+                  className="tactile-btn px-3.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 text-xs bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 cursor-pointer shadow-2xs"
+                  className="tactile-btn px-4 py-1.5 text-xs bg-[#0F172A] text-white font-medium rounded-lg hover:bg-slate-800 cursor-pointer shadow-2xs border border-slate-800"
                 >
                   Lưu ý tưởng
                 </button>
