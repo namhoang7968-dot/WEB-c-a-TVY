@@ -115,7 +115,7 @@ export default function BookmarkletModal({ isOpen, onClose, defaultTab = 'facebo
                     Nhấp vào Bookmark <span className="font-semibold text-blue-700">"⚡ Đồng bộ FB Thúy Vy"</span> trên thanh trình duyệt.
                   </li>
                   <li>
-                    Script sẽ tự động quét lượt cảm xúc, bình luận, chia sẻ và đẩy thẳng về bảng <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-800">social_metrics</code> trên Supabase!
+                    Một bảng popup xem trước sẽ xuất hiện ở góc màn hình. Bấm <span className="font-semibold text-blue-600">"🚀 Gửi về Supabase"</span> để lưu số liệu về bảng <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-800">social_metrics</code>!
                   </li>
                 </ol>
               </div>
@@ -182,7 +182,7 @@ export default function BookmarkletModal({ isOpen, onClose, defaultTab = 'facebo
                     Nhấp vào Bookmark <span className="font-semibold text-rose-700">"🎵 Đồng bộ TikTok Thúy Vy"</span> trên trình duyệt.
                   </li>
                   <li>
-                    Mã sẽ đọc trực tiếp từ bộ nhớ Rehydration của trang và lưu lượt xem, tim, chia sẻ của toàn bộ video về Supabase!
+                    Bảng popup góc màn hình sẽ liệt kê tất cả video quét được từ DOM và số lượt xem thực tế (VD: 15.1K, 1881, 23.8K). Bấm <span className="font-semibold text-rose-600">"🚀 Gửi về Supabase"</span> để hoàn tất!
                   </li>
                 </ol>
               </div>
