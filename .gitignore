@@ -70,6 +70,10 @@ dist-ssr/
 *.zip
 push_to_github.bat
 
+# Alias junction for Antigravity .agent
+.agent
+.agent/
+
 # Vite temporary files
 *.timestamp-*.mjs
 
