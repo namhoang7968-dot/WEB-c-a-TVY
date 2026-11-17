@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { metricsService } from '../../services/otherDataService';
 import { socialSyncService } from '../../services/socialSyncService';
-import { Eye, Heart, MessageSquare, Share2, RefreshCw, Bookmark } from 'lucide-react';
+import { Eye, Heart, MessageSquare, Share2, RefreshCw, Bookmark, ExternalLink } from 'lucide-react';
 import BookmarkletModal from '../BookmarkletModal';
 
 export default function ManualMetrics({ contents = [], onShowToast }) {
   const [metrics, setMetrics] = useState(() => metricsService.get() || []);
+  const [syncedSocialPosts, setSyncedSocialPosts] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [tempRow, setTempRow] = useState({});
   const [isSyncing, setIsSyncing] = useState(false);
@@ -13,6 +14,22 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
 
   const safeContents = Array.isArray(contents) ? contents : [];
   const safeMetrics = Array.isArray(metrics) ? metrics : [];
+
+  // Load synced social posts from Supabase
+  const loadSocialMetrics = async () => {
+    try {
+      const posts = await socialSyncService.fetchMetrics();
+      if (Array.isArray(posts)) {
+        setSyncedSocialPosts(posts);
+      }
+    } catch (e) {
+      console.warn('Lỗi tải social_metrics:', e);
+    }
+  };
+
+  useEffect(() => {
+    loadSocialMetrics();
+  }, []);
 
   const handleSyncTikTok = async () => {
     setIsSyncing(true);
@@ -22,6 +39,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
         onShowToast?.(`Đã đồng bộ ${res.videosCount || 0} video từ TikTok @${res.handle}!`, 'success');
         const refreshed = await metricsService.fetch();
         setMetrics(refreshed || []);
+        loadSocialMetrics();
       } else {
         onShowToast?.('TikTok yêu cầu xác thực bot. Hãy mở Bookmarklet để quét trực tiếp từ trình duyệt!', 'info');
         setShowBookmarkletModal(true);
@@ -65,10 +83,22 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
     onShowToast?.('Đã lưu số liệu thủ công thành công!', 'success');
   };
 
-  const totalViews = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.views) || 0), 0);
-  const totalLikes = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.likes) || 0), 0);
-  const totalComments = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.comments) || 0), 0);
-  const totalShares = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.shares) || 0), 0);
+  // Total KPIs: combination of manual metrics + synced social posts
+  const manualViews = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.views) || 0), 0);
+  const socialViews = syncedSocialPosts.reduce((acc, curr) => acc + (Number(curr?.views) || 0), 0);
+  const totalViews = manualViews + socialViews;
+
+  const manualLikes = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.likes) || 0), 0);
+  const socialLikes = syncedSocialPosts.reduce((acc, curr) => acc + (Number(curr?.likes) || 0), 0);
+  const totalLikes = manualLikes + socialLikes;
+
+  const manualComments = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.comments) || 0), 0);
+  const socialComments = syncedSocialPosts.reduce((acc, curr) => acc + (Number(curr?.comments) || 0), 0);
+  const totalComments = manualComments + socialComments;
+
+  const manualShares = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.shares) || 0), 0);
+  const socialShares = syncedSocialPosts.reduce((acc, curr) => acc + (Number(curr?.shares) || 0), 0);
+  const totalShares = manualShares + socialShares;
 
   return (
     <div className="space-y-5">
@@ -76,7 +106,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
       <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="font-semibold text-slate-900 text-sm">Quản lý số liệu bài viết</h3>
-          <p className="text-xs text-slate-500 font-normal">Đồng bộ tự động từ TikTok hoặc quét số liệu Facebook qua Bookmarklet</p>
+          <p className="text-xs text-slate-500 font-normal">Đồng bộ tự động từ TikTok & Facebook qua Bookmarklet hoặc nhập thủ công</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -94,7 +124,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer"
           >
             <Bookmark className="w-3.5 h-3.5 text-blue-600" />
-            <span>Bookmarklet Quét Facebook</span>
+            <span>Bookmarklet Quét Số Liệu</span>
           </button>
         </div>
       </div>
@@ -107,13 +137,19 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
             <span>Tổng lượt xem (Views)</span>
           </div>
           <p className="text-2xl font-bold font-mono text-slate-900">{totalViews.toLocaleString('vi-VN')}</p>
+          {socialViews > 0 && (
+            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialViews.toLocaleString('vi-VN')}</p>
+          )}
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
             <Heart className="w-3.5 h-3.5 text-rose-500" />
-            <span>Tổng thích (Likes)</span>
+            <span>Tổng Tim / Thích (Likes)</span>
           </div>
           <p className="text-2xl font-bold font-mono text-slate-900">{totalLikes.toLocaleString('vi-VN')}</p>
+          {socialLikes > 0 && (
+            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialLikes.toLocaleString('vi-VN')}</p>
+          )}
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
@@ -121,6 +157,9 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
             <span>Bình luận (Comments)</span>
           </div>
           <p className="text-2xl font-bold font-mono text-slate-900">{totalComments.toLocaleString('vi-VN')}</p>
+          {socialComments > 0 && (
+            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialComments.toLocaleString('vi-VN')}</p>
+          )}
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
@@ -128,14 +167,101 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
             <span>Chia sẻ (Shares)</span>
           </div>
           <p className="text-2xl font-bold font-mono text-slate-900">{totalShares.toLocaleString('vi-VN')}</p>
+          {socialShares > 0 && (
+            <p className="text-[11px] text-slate-400 mt-0.5">TikTok & FB: {socialShares.toLocaleString('vi-VN')}</p>
+          )}
         </div>
       </div>
 
-      {/* Table */}
+      {/* Synced Social Posts Table (social_metrics) */}
+      {syncedSocialPosts.length > 0 && (
+        <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
+          <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900">Bài viết đã đồng bộ từ TikTok & Facebook</h3>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-mono">
+                  {syncedSocialPosts.length} bài
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 font-normal">Dữ liệu thực tế quét qua Bookmarklet được lưu trực tiếp tại bảng <code className="bg-slate-200/70 px-1 py-0.5 rounded text-slate-800 font-mono">social_metrics</code></p>
+            </div>
+            <button
+              onClick={loadSocialMetrics}
+              className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Tải lại</span>
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
+              <thead className="bg-slate-50/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200/90">
+                <tr>
+                  <th className="py-3 px-4">Kênh</th>
+                  <th className="py-3 px-4">Tiêu đề bài viết / Video</th>
+                  <th className="py-3 px-4">👁️ Lượt xem</th>
+                  <th className="py-3 px-4">❤️ Tim / Thích</th>
+                  <th className="py-3 px-4">💬 Bình luận</th>
+                  <th className="py-3 px-4">↗️ Chia sẻ</th>
+                  <th className="py-3 px-4 text-right">Xem link</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-mono text-xs">
+                {syncedSocialPosts.map((post) => (
+                  <tr key={post.id || post.post_id} className="hover:bg-slate-50/75 transition-colors">
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold font-sans ${
+                        post.platform === 'tiktok'
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                          : 'bg-blue-50 text-blue-700 border border-blue-200/60'
+                      }`}>
+                        {post.platform === 'tiktok' ? '🎵 TikTok' : '⚡ Facebook'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-sans font-medium text-slate-900 max-w-xs truncate" title={post.title}>
+                      {post.title || `Bài viết #${post.post_id}`}
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-blue-600">
+                      {(Number(post.views) || 0).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-rose-600">
+                      {(Number(post.likes) || 0).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-amber-600">
+                      {(Number(post.comments) || 0).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4 font-medium text-slate-600">
+                      {(Number(post.shares) || 0).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      {post.url ? (
+                        <a
+                          href={post.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-slate-400 hover:text-blue-600 font-sans text-xs"
+                        >
+                          Mở link <ExternalLink className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <span className="text-slate-400 font-sans">-</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Manual Content Plan Metrics Table */}
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
         <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Bảng nhập số liệu từng bài</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Bảng số liệu 8 bài bắt buộc & Lịch nội dung</h3>
             <p className="text-xs text-slate-500 font-normal">Cập nhật chỉ số thực tế sau khi đăng bài để báo cáo ban tổ chức</p>
           </div>
         </div>
@@ -146,10 +272,10 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
               <tr>
                 <th className="py-3 px-4">Mã nội dung</th>
                 <th className="py-3 px-4">Kênh</th>
-                <th className="py-3 px-4">Lượt xem</th>
-                <th className="py-3 px-4">Thích</th>
-                <th className="py-3 px-4">Bình luận</th>
-                <th className="py-3 px-4">Chia sẻ</th>
+                <th className="py-3 px-4">👁️ Lượt xem</th>
+                <th className="py-3 px-4">❤️ Thích</th>
+                <th className="py-3 px-4">💬 Bình luận</th>
+                <th className="py-3 px-4">↗️ Chia sẻ</th>
                 <th className="py-3 px-4">Lưu</th>
                 <th className="py-3 px-4 text-right">Thao tác</th>
               </tr>
