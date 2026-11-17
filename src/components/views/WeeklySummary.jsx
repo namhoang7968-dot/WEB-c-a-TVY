@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Clock, Calendar, CheckCircle, FileText, Send, Award } from 'lucide-react';
 
-export default function WeeklySummary({ contents, stats, onShowToast }) {
+export default function WeeklySummary({ contents = [], stats = {}, onShowToast }) {
   const [selectedWeek, setSelectedWeek] = useState('Tuần 1');
   const [reflection, setReflection] = useState(
     'Tuần đầu tiên tập trung vào việc kích hoạt chiến dịch và bài viết chủ đề Study / Deadline thuyết trình. Video TikTok đạt lượt xem vượt kỳ vọng nhờ đánh trúng tâm lý sinh viên mùa thi cuối kỳ.'
@@ -10,6 +10,9 @@ export default function WeeklySummary({ contents, stats, onShowToast }) {
   const [nextWeekPlan, setNextWeekPlan] = useState(
     'Triển khai chủ đề Career: Hướng dẫn tối ưu CV và mock interview với Gemini. Chuẩn bị bộ 5 slide infographic cho bài viết Facebook.'
   );
+
+  const safeContents = Array.isArray(contents) ? contents : [];
+  const publishedCount = safeContents.filter(c => c?.status === 'Đã đăng').length;
 
   const handleSaveSummary = (e) => {
     e.preventDefault();
@@ -30,7 +33,7 @@ export default function WeeklySummary({ contents, stats, onShowToast }) {
             <button
               key={w}
               onClick={() => setSelectedWeek(w)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 selectedWeek === w
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -45,13 +48,13 @@ export default function WeeklySummary({ contents, stats, onShowToast }) {
       {/* Highlights */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-2xs">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Nội dung hoàn thành</p>
-          <p className="text-2xl font-bold text-slate-900">2 bài đăng</p>
-          <p className="text-xs text-emerald-600 mt-1 font-medium">100% đúng hạn deadline</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Nội dung đã đăng</p>
+          <p className="text-2xl font-bold text-slate-900">{publishedCount} bài</p>
+          <p className="text-xs text-emerald-600 mt-1 font-medium">Theo dõi qua Supabase</p>
         </div>
 
         <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-2xs">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Lượt tiếp cận tuần này</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Lượt tiếp cận ước tính</p>
           <p className="text-2xl font-bold text-blue-600">42,700 views</p>
           <p className="text-xs text-slate-400 mt-1">Từ TikTok & Facebook cá nhân</p>
         </div>
@@ -92,7 +95,7 @@ export default function WeeklySummary({ contents, stats, onShowToast }) {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer shadow-sm"
           >
             <FileText className="w-4 h-4" />
             <span>Lưu bản tổng kết</span>

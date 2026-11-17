@@ -11,13 +11,14 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-export default function Overview({ contents, stats, onNavigateToCalendar, onOpenCreateModal }) {
-  const requiredDone = stats?.requiredDone || 0;
-  const requiredTotal = stats?.requiredTotal || 8;
+export default function Overview({ contents = [], stats = {}, onNavigateToCalendar, onOpenCreateModal }) {
+  const safeContents = Array.isArray(contents) ? contents : [];
+  const requiredDone = Number(stats?.requiredDone) || 0;
+  const requiredTotal = Number(stats?.requiredTotal) || 8;
   const progressPercent = Math.min(100, Math.round((requiredDone / requiredTotal) * 100));
 
-  const upcomingPosts = contents
-    .filter(item => item.status !== 'Đã đăng')
+  const upcomingPosts = safeContents
+    .filter(item => item?.status !== 'Đã đăng')
     .slice(0, 4);
 
   return (
@@ -127,7 +128,7 @@ export default function Overview({ contents, stats, onNavigateToCalendar, onOpen
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-slate-900">{contents.length}</span>
+            <span className="text-2xl font-bold text-slate-900">{safeContents.length}</span>
             <span className="text-xs font-medium text-slate-500">tổng số bài</span>
           </div>
           <p className="mt-2 text-xs text-slate-500">
@@ -147,34 +148,38 @@ export default function Overview({ contents, stats, onNavigateToCalendar, onOpen
             </div>
             <button
               onClick={onNavigateToCalendar}
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700"
+              className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
             >
               Xem tất cả →
             </button>
           </div>
 
           <div className="space-y-3">
-            {upcomingPosts.map((item) => (
-              <div
-                key={item.id}
-                className="p-3.5 rounded-lg border border-slate-100 hover:border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-start justify-between gap-3"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-slate-900">{item.code}</span>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
-                      {item.group}
-                    </span>
-                    <span className="text-xs text-slate-500">• {item.channel}</span>
+            {upcomingPosts.length > 0 ? (
+              upcomingPosts.map((item) => (
+                <div
+                  key={item?.id || Math.random()}
+                  className="p-3.5 rounded-lg border border-slate-100 hover:border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-start justify-between gap-3"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold text-slate-900">{item?.code}</span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
+                        {item?.group || 'Nội dung'}
+                      </span>
+                      <span className="text-xs text-slate-500">• {item?.channel}</span>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{item?.topic}</p>
                   </div>
-                  <p className="text-xs font-semibold text-slate-800 truncate">{item.topic}</p>
+                  <div className="text-right shrink-0">
+                    <span className="text-xs font-semibold text-slate-700 block">{item?.scheduledDate}</span>
+                    <span className="text-[11px] text-amber-600 font-medium">Hạn: {item?.deadline}</span>
+                  </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <span className="text-xs font-semibold text-slate-700 block">{item.scheduledDate}</span>
-                  <span className="text-[11px] text-amber-600 font-medium">Hạn: {item.deadline}</span>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-xs text-slate-400 text-center py-6">Không có bài viết nào sắp đến hạn</p>
+            )}
           </div>
         </div>
 

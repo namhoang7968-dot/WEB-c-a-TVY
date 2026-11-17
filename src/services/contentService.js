@@ -98,6 +98,11 @@ const mapToSupabase = (item) => ({
 });
 
 export const contentService = {
+  // Alias for getLocalCache for backwards-compatibility
+  getContents: () => {
+    return contentService.getLocalCache();
+  },
+
   // Read local cache immediately for instant render
   getLocalCache: () => {
     try {

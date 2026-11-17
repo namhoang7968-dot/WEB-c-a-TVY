@@ -1,4 +1,5 @@
-// Data services for Checklist, Ideas, Metrics & Settings with direct Supabase Sync
+// Data services for Checklist, Ideas, Metrics, Profile Growth, Conversions & Settings
+// Complete with Safe Fallbacks and Supabase Direct Sync
 
 import { supabase } from './supabaseClient';
 
@@ -6,6 +7,8 @@ const CHECKLIST_KEY = 'gsa_campaign_checklist';
 const IDEAS_KEY = 'gsa_campaign_ideas';
 const METRICS_KEY = 'gsa_campaign_metrics';
 const SETTINGS_KEY = 'gsa_campaign_settings';
+const GROWTH_KEY = 'gsa_campaign_growth';
+const CONVERSIONS_KEY = 'gsa_campaign_conversions';
 
 export const INITIAL_CHECKLIST = [
   { id: 'c1', title: 'Hoàn thiện hồ sơ GSA Creator & Ký cam kết', category: 'Onboarding', completed: true, deadline: '20/10/2024' },
@@ -57,6 +60,19 @@ export const INITIAL_METRICS = [
   { id: 'm6', code: 'GSA-EXTRA-02-Threads', views: 8900, likes: 620, comments: 45, shares: 92, saves: 180, conversions: 35 }
 ];
 
+export const INITIAL_GROWTH = [
+  { name: 'TikTok', handle: '@gsa.creator.vn', currentFollowers: 14200, startFollowers: 9800, target: 20000, linkClicks: 1240 },
+  { name: 'Facebook cá nhân', handle: 'facebook.com/creator', currentFollowers: 6500, startFollowers: 5100, target: 10000, linkClicks: 820 },
+  { name: 'Threads', handle: '@creator_thoughts', currentFollowers: 2800, startFollowers: 1100, target: 5000, linkClicks: 340 },
+];
+
+export const INITIAL_CONVERSIONS = [
+  { date: '22/10/2024', source: 'TikTok Bio Link', clicks: 312, signups: 42, conversionRate: '13.4%' },
+  { date: '22/10/2024', source: 'Facebook Comment Pin', clicks: 184, signups: 28, conversionRate: '15.2%' },
+  { date: '23/10/2024', source: 'TikTok Teaser Video CTA', clicks: 495, signups: 86, conversionRate: '17.3%' },
+  { date: '24/10/2024', source: 'Threads Link', clicks: 120, signups: 14, conversionRate: '11.6%' },
+];
+
 export const INITIAL_SETTINGS = {
   creatorName: 'GSA Ambassador',
   campaignName: 'Google Student Ambassador (GSA) Campaign 2024',
@@ -67,6 +83,7 @@ export const INITIAL_SETTINGS = {
 
 // ================= CHECKLIST SERVICE =================
 export const checklistService = {
+  get: () => checklistService.getCache(),
   getCache: () => {
     try {
       const d = localStorage.getItem(CHECKLIST_KEY);
@@ -76,7 +93,11 @@ export const checklistService = {
     }
   },
   setCache: (items) => {
-    localStorage.setItem(CHECKLIST_KEY, JSON.stringify(items));
+    try {
+      localStorage.setItem(CHECKLIST_KEY, JSON.stringify(items || []));
+    } catch (e) {
+      console.warn(e);
+    }
   },
   fetch: async () => {
     try {
@@ -93,14 +114,13 @@ export const checklistService = {
     }
   },
   toggle: async (id) => {
-    const list = checklistService.getCache();
+    const list = checklistService.getCache() || [];
     const item = list.find(i => i.id === id);
     if (!item) return list;
     const newStatus = !item.completed;
     const updated = list.map(i => i.id === id ? { ...i, completed: newStatus } : i);
     checklistService.setCache(updated);
 
-    // Sync Supabase
     try {
       await supabase.from('gsa_checklist').update({ completed: newStatus }).eq('id', id);
     } catch (err) {
@@ -109,7 +129,7 @@ export const checklistService = {
     return updated;
   },
   add: async (item) => {
-    const list = checklistService.getCache();
+    const list = checklistService.getCache() || [];
     try {
       const { data, error } = await supabase.from('gsa_checklist').insert([item]).select();
       if (error) throw error;
@@ -125,7 +145,7 @@ export const checklistService = {
     }
   },
   delete: async (id) => {
-    const list = checklistService.getCache();
+    const list = checklistService.getCache() || [];
     const updated = list.filter(i => i.id !== id);
     checklistService.setCache(updated);
     try {
@@ -139,6 +159,7 @@ export const checklistService = {
 
 // ================= IDEA BANK SERVICE =================
 export const ideaService = {
+  get: () => ideaService.getCache(),
   getCache: () => {
     try {
       const d = localStorage.getItem(IDEAS_KEY);
@@ -148,7 +169,11 @@ export const ideaService = {
     }
   },
   setCache: (items) => {
-    localStorage.setItem(IDEAS_KEY, JSON.stringify(items));
+    try {
+      localStorage.setItem(IDEAS_KEY, JSON.stringify(items || []));
+    } catch (e) {
+      console.warn(e);
+    }
   },
   fetch: async () => {
     try {
@@ -164,7 +189,7 @@ export const ideaService = {
     }
   },
   add: async (idea) => {
-    const list = ideaService.getCache();
+    const list = ideaService.getCache() || [];
     try {
       const { data, error } = await supabase.from('gsa_ideas').insert([idea]).select();
       if (error) throw error;
@@ -180,7 +205,7 @@ export const ideaService = {
     }
   },
   delete: async (id) => {
-    const list = ideaService.getCache();
+    const list = ideaService.getCache() || [];
     const updated = list.filter(i => i.id !== id);
     ideaService.setCache(updated);
     try {
@@ -194,6 +219,7 @@ export const ideaService = {
 
 // ================= MANUAL METRICS SERVICE =================
 export const metricsService = {
+  get: () => metricsService.getCache(),
   getCache: () => {
     try {
       const d = localStorage.getItem(METRICS_KEY);
@@ -203,7 +229,11 @@ export const metricsService = {
     }
   },
   setCache: (items) => {
-    localStorage.setItem(METRICS_KEY, JSON.stringify(items));
+    try {
+      localStorage.setItem(METRICS_KEY, JSON.stringify(items || []));
+    } catch (e) {
+      console.warn(e);
+    }
   },
   fetch: async () => {
     try {
@@ -232,7 +262,7 @@ export const metricsService = {
     metricsService.setCache(items);
   },
   update: async (code, metricData) => {
-    const list = metricsService.getCache();
+    const list = metricsService.getCache() || [];
     const updated = list.map(item => item.code === code ? { ...item, ...metricData } : item);
     metricsService.setCache(updated);
 
@@ -254,6 +284,70 @@ export const metricsService = {
   }
 };
 
+// ================= PROFILE GROWTH SERVICE =================
+export const growthService = {
+  get: () => {
+    try {
+      const d = localStorage.getItem(GROWTH_KEY);
+      return d ? JSON.parse(d) : INITIAL_GROWTH;
+    } catch {
+      return INITIAL_GROWTH;
+    }
+  },
+  save: (data) => {
+    try {
+      localStorage.setItem(GROWTH_KEY, JSON.stringify(data || []));
+    } catch (e) {
+      console.warn(e);
+    }
+  },
+  fetch: async () => {
+    try {
+      const { data, error } = await supabase.from('gsa_profile_growth').select('*');
+      if (error) throw error;
+      if (data && data.length > 0) {
+        growthService.save(data);
+        return data;
+      }
+      return growthService.get();
+    } catch {
+      return growthService.get();
+    }
+  }
+};
+
+// ================= CONVERSIONS SERVICE =================
+export const conversionService = {
+  get: () => {
+    try {
+      const d = localStorage.getItem(CONVERSIONS_KEY);
+      return d ? JSON.parse(d) : INITIAL_CONVERSIONS;
+    } catch {
+      return INITIAL_CONVERSIONS;
+    }
+  },
+  save: (data) => {
+    try {
+      localStorage.setItem(CONVERSIONS_KEY, JSON.stringify(data || []));
+    } catch (e) {
+      console.warn(e);
+    }
+  },
+  fetch: async () => {
+    try {
+      const { data, error } = await supabase.from('gsa_conversions').select('*');
+      if (error) throw error;
+      if (data && data.length > 0) {
+        conversionService.save(data);
+        return data;
+      }
+      return conversionService.get();
+    } catch {
+      return conversionService.get();
+    }
+  }
+};
+
 // ================= SETTINGS SERVICE =================
 export const settingsService = {
   get: () => {
@@ -265,6 +359,10 @@ export const settingsService = {
     }
   },
   save: (config) => {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(config));
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(config));
+    } catch (e) {
+      console.warn(e);
+    }
   }
 };

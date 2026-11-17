@@ -3,36 +3,37 @@ import { checklistService } from '../../services/otherDataService';
 import { CheckSquare, Square, Plus, Trash2, Calendar, CheckCircle2 } from 'lucide-react';
 
 export default function CampaignChecklist({ onShowToast }) {
-  const [items, setItems] = useState(() => checklistService.get());
+  const [items, setItems] = useState(() => checklistService.get() || []);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskCategory, setNewTaskCategory] = useState('Sản xuất nội dung');
   const [newTaskDeadline, setNewTaskDeadline] = useState('');
 
-  const completedCount = items.filter(i => i.completed).length;
-  const totalCount = items.length;
+  const safeItems = Array.isArray(items) ? items : [];
+  const completedCount = safeItems.filter(i => Boolean(i?.completed)).length;
+  const totalCount = safeItems.length;
   const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
-  const handleToggle = (id) => {
-    const updated = checklistService.toggle(id);
-    setItems(updated);
+  const handleToggle = async (id) => {
+    const updated = await checklistService.toggle(id);
+    setItems(updated || []);
   };
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
-    const updated = checklistService.add({
+    const updated = await checklistService.add({
       title: newTaskTitle,
       category: newTaskCategory,
       deadline: newTaskDeadline || '30/10/2024'
     });
-    setItems(updated);
+    setItems(updated || []);
     setNewTaskTitle('');
     onShowToast?.('Đã thêm nhiệm vụ vào checklist!', 'success');
   };
 
-  const handleDelete = (id) => {
-    const updated = checklistService.delete(id);
-    setItems(updated);
+  const handleDelete = async (id) => {
+    const updated = await checklistService.delete(id);
+    setItems(updated || []);
     onShowToast?.('Đã xóa nhiệm vụ khỏi checklist', 'info');
   };
 
@@ -85,46 +86,52 @@ export default function CampaignChecklist({ onShowToast }) {
 
       {/* Task list */}
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs divide-y divide-slate-100 overflow-hidden">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={`p-4 flex items-center justify-between gap-3 transition-colors ${
-              item.completed ? 'bg-slate-50/50' : 'hover:bg-slate-50'
-            }`}
-          >
-            <div className="flex items-start gap-3 flex-1 min-w-0">
-              <button
-                onClick={() => handleToggle(item.id)}
-                className="mt-0.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0 cursor-pointer"
-              >
-                {item.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-emerald-50" />
-                ) : (
-                  <Square className="w-5 h-5" />
-                )}
-              </button>
-              <div className="min-w-0">
-                <p className={`text-sm font-medium ${item.completed ? 'line-through text-slate-400 font-normal' : 'text-slate-800'}`}>
-                  {item.title}
-                </p>
-                <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
-                  <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
-                    {item.category}
-                  </span>
-                  <span>• Hạn: {item.deadline}</span>
+        {safeItems.length > 0 ? (
+          safeItems.map((item) => (
+            <div
+              key={item?.id || Math.random()}
+              className={`p-4 flex items-center justify-between gap-3 transition-colors ${
+                item?.completed ? 'bg-slate-50/50' : 'hover:bg-slate-50'
+              }`}
+            >
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <button
+                  onClick={() => handleToggle(item?.id)}
+                  className="mt-0.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0 cursor-pointer"
+                >
+                  {item?.completed ? (
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-emerald-50" />
+                  ) : (
+                    <Square className="w-5 h-5" />
+                  )}
+                </button>
+                <div className="min-w-0">
+                  <p className={`text-sm font-medium ${item?.completed ? 'line-through text-slate-400 font-normal' : 'text-slate-800'}`}>
+                    {item?.title || 'Nhiệm vụ'}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
+                    <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
+                      {item?.category || 'Chung'}
+                    </span>
+                    <span>• Hạn: {item?.deadline || 'Không hạn'}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button
-              onClick={() => handleDelete(item.id)}
-              className="text-slate-300 hover:text-rose-500 p-1.5 rounded transition-colors cursor-pointer"
-              title="Xóa nhiệm vụ"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+              <button
+                onClick={() => handleDelete(item?.id)}
+                className="text-slate-300 hover:text-rose-500 p-1.5 rounded transition-colors cursor-pointer"
+                title="Xóa nhiệm vụ"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="p-8 text-center text-xs text-slate-400">
+            Chưa có đầu việc nào trong checklist
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { conversionService } from '../../services/otherDataService';
 import { Target, Link, Copy, Check, MousePointerClick, UserPlus, Award } from 'lucide-react';
 
 export default function ConversionTracker({ onShowToast }) {
   const [copied, setCopied] = useState(false);
   const myUtmLink = 'https://ai.google.dev/plus?utm_source=creator&utm_campaign=gsa2024&utm_content=vn_ambassador';
+
+  const [referralData] = useState(() => conversionService.get() || []);
+  const safeData = Array.isArray(referralData) ? referralData : [];
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(myUtmLink);
@@ -12,16 +16,9 @@ export default function ConversionTracker({ onShowToast }) {
     onShowToast?.('Đã sao chép link chiến dịch kèm UTM!', 'success');
   };
 
-  const referralData = [
-    { date: '22/10/2024', source: 'TikTok Bio Link', clicks: 312, signups: 42, conversionRate: '13.4%' },
-    { date: '22/10/2024', source: 'Facebook Comment Pin', clicks: 184, signups: 28, conversionRate: '15.2%' },
-    { date: '23/10/2024', source: 'TikTok Teaser Video CTA', clicks: 495, signups: 86, conversionRate: '17.3%' },
-    { date: '24/10/2024', source: 'Threads Link', clicks: 120, signups: 14, conversionRate: '11.6%' },
-  ];
-
-  const totalClicks = referralData.reduce((acc, c) => acc + c.clicks, 0);
-  const totalSignups = referralData.reduce((acc, c) => acc + c.signups, 0);
-  const avgRate = ((totalSignups / totalClicks) * 100).toFixed(1);
+  const totalClicks = safeData.reduce((acc, c) => acc + (Number(c?.clicks) || 0), 0);
+  const totalSignups = safeData.reduce((acc, c) => acc + (Number(c?.signups) || 0), 0);
+  const avgRate = totalClicks > 0 ? ((totalSignups / totalClicks) * 100).toFixed(1) : '0.0';
 
   return (
     <div className="space-y-6">
@@ -89,15 +86,23 @@ export default function ConversionTracker({ onShowToast }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {referralData.map((row, idx) => (
-              <tr key={idx} className="hover:bg-slate-50">
-                <td className="py-3 px-4 text-xs text-slate-600">{row.date}</td>
-                <td className="py-3 px-4 font-semibold text-slate-800 text-xs">{row.source}</td>
-                <td className="py-3 px-4 text-xs font-semibold text-slate-900">{row.clicks}</td>
-                <td className="py-3 px-4 text-xs font-bold text-emerald-600">+{row.signups}</td>
-                <td className="py-3 px-4 text-xs font-semibold text-blue-600">{row.conversionRate}</td>
+            {safeData.length > 0 ? (
+              safeData.map((row, idx) => (
+                <tr key={idx} className="hover:bg-slate-50">
+                  <td className="py-3 px-4 text-xs text-slate-600">{row?.date || ''}</td>
+                  <td className="py-3 px-4 font-semibold text-slate-800 text-xs">{row?.source || ''}</td>
+                  <td className="py-3 px-4 text-xs font-semibold text-slate-900">{(row?.clicks || 0).toLocaleString()}</td>
+                  <td className="py-3 px-4 text-xs font-bold text-emerald-600">+{(row?.signups || 0).toLocaleString()}</td>
+                  <td className="py-3 px-4 text-xs font-semibold text-blue-600">{row?.conversionRate || '0%'}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="py-8 text-center text-xs text-slate-400">
+                  Chưa có số liệu chuyển đổi
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

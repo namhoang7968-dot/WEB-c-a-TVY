@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import { metricsService } from '../../services/otherDataService';
 import { Save, BarChart3, TrendingUp, Eye, Heart, MessageSquare, Share2, Bookmark } from 'lucide-react';
 
-export default function ManualMetrics({ contents, onShowToast }) {
-  const [metrics, setMetrics] = useState(() => metricsService.get());
+export default function ManualMetrics({ contents = [], onShowToast }) {
+  const [metrics, setMetrics] = useState(() => metricsService.get() || []);
   const [editingId, setEditingId] = useState(null);
   const [tempRow, setTempRow] = useState({});
 
+  const safeContents = Array.isArray(contents) ? contents : [];
+  const safeMetrics = Array.isArray(metrics) ? metrics : [];
+
   const handleStartEdit = (item) => {
+    if (!item) return;
     setEditingId(item.id);
-    const existing = metrics.find(m => m.code === item.code) || {
-      id: 'm-' + item.id,
-      code: item.code,
+    const existing = safeMetrics.find(m => m?.code === item.code) || {
+      id: 'm-' + (item.id || Date.now()),
+      code: item.code || '',
       views: 0,
       likes: 0,
       comments: 0,
@@ -23,23 +27,24 @@ export default function ManualMetrics({ contents, onShowToast }) {
   };
 
   const handleSaveEdit = (code) => {
-    const existingIndex = metrics.findIndex(m => m.code === code);
+    if (!code) return;
+    const existingIndex = safeMetrics.findIndex(m => m?.code === code);
     let updated;
     if (existingIndex >= 0) {
-      updated = metrics.map(m => m.code === code ? { ...tempRow } : m);
+      updated = safeMetrics.map(m => m?.code === code ? { ...tempRow } : m);
     } else {
-      updated = [...metrics, { ...tempRow, code }];
+      updated = [...safeMetrics, { ...tempRow, code }];
     }
     setMetrics(updated);
-    metricsService.save(updated);
+    metricsService.update(code, tempRow);
     setEditingId(null);
     onShowToast?.('Đã lưu số liệu thủ công thành công!', 'success');
   };
 
-  const totalViews = metrics.reduce((acc, curr) => acc + (Number(curr.views) || 0), 0);
-  const totalLikes = metrics.reduce((acc, curr) => acc + (Number(curr.likes) || 0), 0);
-  const totalComments = metrics.reduce((acc, curr) => acc + (Number(curr.comments) || 0), 0);
-  const totalShares = metrics.reduce((acc, curr) => acc + (Number(curr.shares) || 0), 0);
+  const totalViews = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.views) || 0), 0);
+  const totalLikes = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.likes) || 0), 0);
+  const totalComments = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.comments) || 0), 0);
+  const totalShares = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.shares) || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -85,7 +90,7 @@ export default function ManualMetrics({ contents, onShowToast }) {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-sm min-w-[700px]">
             <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Mã nội dung</th>
@@ -99,119 +104,127 @@ export default function ManualMetrics({ contents, onShowToast }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {contents.map((item) => {
-                const metric = metrics.find(m => m.code === item.code) || {
-                  views: 0, likes: 0, comments: 0, shares: 0, saves: 0
-                };
-                const isEditing = editingId === item.id;
+              {safeContents.length > 0 ? (
+                safeContents.map((item) => {
+                  const metric = safeMetrics.find(m => m?.code === item?.code) || {
+                    views: 0, likes: 0, comments: 0, shares: 0, saves: 0
+                  };
+                  const isEditing = editingId === item?.id;
 
-                return (
-                  <tr key={item.id} className="hover:bg-slate-50/60">
-                    <td className="py-3 px-4 font-semibold text-slate-900 text-xs">
-                      {item.code}
-                      <span className="block text-[11px] text-slate-400 font-normal truncate max-w-xs">{item.topic}</span>
-                    </td>
-                    <td className="py-3 px-4 text-xs text-slate-600">{item.channel}</td>
+                  return (
+                    <tr key={item?.id || Math.random()} className="hover:bg-slate-50/60">
+                      <td className="py-3 px-4 font-semibold text-slate-900 text-xs">
+                        {item?.code}
+                        <span className="block text-[11px] text-slate-400 font-normal truncate max-w-xs">{item?.topic}</span>
+                      </td>
+                      <td className="py-3 px-4 text-xs text-slate-600">{item?.channel}</td>
 
-                    {/* Views */}
-                    <td className="py-3 px-4">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={tempRow.views ?? 0}
-                          onChange={(e) => setTempRow({ ...tempRow, views: parseInt(e.target.value) || 0 })}
-                          className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
-                        />
-                      ) : (
-                        <span className="font-semibold text-slate-800">{(metric.views || 0).toLocaleString()}</span>
-                      )}
-                    </td>
+                      {/* Views */}
+                      <td className="py-3 px-4">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={tempRow.views ?? 0}
+                            onChange={(e) => setTempRow({ ...tempRow, views: parseInt(e.target.value) || 0 })}
+                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                          />
+                        ) : (
+                          <span className="font-semibold text-slate-800">{(metric?.views || 0).toLocaleString()}</span>
+                        )}
+                      </td>
 
-                    {/* Likes */}
-                    <td className="py-3 px-4">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={tempRow.likes ?? 0}
-                          onChange={(e) => setTempRow({ ...tempRow, likes: parseInt(e.target.value) || 0 })}
-                          className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
-                        />
-                      ) : (
-                        <span className="font-semibold text-slate-800">{(metric.likes || 0).toLocaleString()}</span>
-                      )}
-                    </td>
+                      {/* Likes */}
+                      <td className="py-3 px-4">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={tempRow.likes ?? 0}
+                            onChange={(e) => setTempRow({ ...tempRow, likes: parseInt(e.target.value) || 0 })}
+                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                          />
+                        ) : (
+                          <span className="font-semibold text-slate-800">{(metric?.likes || 0).toLocaleString()}</span>
+                        )}
+                      </td>
 
-                    {/* Comments */}
-                    <td className="py-3 px-4">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={tempRow.comments ?? 0}
-                          onChange={(e) => setTempRow({ ...tempRow, comments: parseInt(e.target.value) || 0 })}
-                          className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
-                        />
-                      ) : (
-                        <span className="font-semibold text-slate-800">{(metric.comments || 0).toLocaleString()}</span>
-                      )}
-                    </td>
+                      {/* Comments */}
+                      <td className="py-3 px-4">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={tempRow.comments ?? 0}
+                            onChange={(e) => setTempRow({ ...tempRow, comments: parseInt(e.target.value) || 0 })}
+                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                          />
+                        ) : (
+                          <span className="font-semibold text-slate-800">{(metric?.comments || 0).toLocaleString()}</span>
+                        )}
+                      </td>
 
-                    {/* Shares */}
-                    <td className="py-3 px-4">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={tempRow.shares ?? 0}
-                          onChange={(e) => setTempRow({ ...tempRow, shares: parseInt(e.target.value) || 0 })}
-                          className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
-                        />
-                      ) : (
-                        <span className="font-semibold text-slate-800">{(metric.shares || 0).toLocaleString()}</span>
-                      )}
-                    </td>
+                      {/* Shares */}
+                      <td className="py-3 px-4">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={tempRow.shares ?? 0}
+                            onChange={(e) => setTempRow({ ...tempRow, shares: parseInt(e.target.value) || 0 })}
+                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                          />
+                        ) : (
+                          <span className="font-semibold text-slate-800">{(metric?.shares || 0).toLocaleString()}</span>
+                        )}
+                      </td>
 
-                    {/* Saves */}
-                    <td className="py-3 px-4">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={tempRow.saves ?? 0}
-                          onChange={(e) => setTempRow({ ...tempRow, saves: parseInt(e.target.value) || 0 })}
-                          className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
-                        />
-                      ) : (
-                        <span className="font-semibold text-slate-800">{(metric.saves || 0).toLocaleString()}</span>
-                      )}
-                    </td>
+                      {/* Saves */}
+                      <td className="py-3 px-4">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={tempRow.saves ?? 0}
+                            onChange={(e) => setTempRow({ ...tempRow, saves: parseInt(e.target.value) || 0 })}
+                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                          />
+                        ) : (
+                          <span className="font-semibold text-slate-800">{(metric?.saves || 0).toLocaleString()}</span>
+                        )}
+                      </td>
 
-                    {/* Action */}
-                    <td className="py-3 px-4 text-center">
-                      {isEditing ? (
-                        <div className="flex items-center justify-center gap-1">
+                      {/* Action */}
+                      <td className="py-3 px-4 text-center">
+                        {isEditing ? (
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => handleSaveEdit(item?.code)}
+                              className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold hover:bg-blue-700 cursor-pointer"
+                            >
+                              Lưu
+                            </button>
+                            <button
+                              onClick={() => setEditingId(null)}
+                              className="text-slate-500 hover:text-slate-700 text-xs px-1 cursor-pointer"
+                            >
+                              Hủy
+                            </button>
+                          </div>
+                        ) : (
                           <button
-                            onClick={() => handleSaveEdit(item.code)}
-                            className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold hover:bg-blue-700"
+                            onClick={() => handleStartEdit(item)}
+                            className="text-xs text-blue-600 font-semibold hover:underline cursor-pointer"
                           >
-                            Lưu
+                            Nhập số liệu
                           </button>
-                          <button
-                            onClick={() => setEditingId(null)}
-                            className="text-slate-500 hover:text-slate-700 text-xs px-1"
-                          >
-                            Hủy
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleStartEdit(item)}
-                          className="text-xs text-blue-600 font-semibold hover:underline"
-                        >
-                          Nhập số liệu
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="8" className="py-8 text-center text-xs text-slate-400">
+                    Chưa có bài viết nào trong danh sách
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

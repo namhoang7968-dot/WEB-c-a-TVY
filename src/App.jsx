@@ -5,6 +5,7 @@ import ContentCalendar from './components/ContentCalendar';
 import ContentModal from './components/ContentModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import Toast from './components/Toast';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Auxiliary views
 import Overview from './components/views/Overview';
@@ -18,11 +19,11 @@ import WeeklySummary from './components/views/WeeklySummary';
 import SettingsData from './components/views/SettingsData';
 
 import { contentService } from './services/contentService';
-import { checklistService, ideaService, metricsService } from './services/otherDataService';
+import { checklistService } from './services/otherDataService';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('calendar');
-  const [contents, setContents] = useState(() => contentService.getLocalCache());
+  const [contents, setContents] = useState(() => contentService.getLocalCache() || []);
   const [stats, setStats] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,10 +48,12 @@ export default function App() {
     try {
       setIsLoading(true);
       const list = await contentService.fetchContents();
-      setContents(list);
-      const calculatedStats = contentService.getStats(list);
+      const safeList = Array.isArray(list) ? list : [];
+      setContents(safeList);
+      const calculatedStats = contentService.getStats(safeList) || {};
       const checklistItems = await checklistService.fetch();
-      const checklistPending = checklistItems.filter(i => !i.completed).length;
+      const safeChecklist = Array.isArray(checklistItems) ? checklistItems : [];
+      const checklistPending = safeChecklist.filter(i => !i?.completed).length;
       setStats({ ...calculatedStats, checklistPending });
     } catch (err) {
       console.warn('Lỗi đồng bộ Supabase:', err);
@@ -60,13 +63,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Initial fetch from Supabase
     refreshData();
 
     // Subscribe to Realtime Supabase changes
     const unsubscribe = contentService.subscribeToChanges((newContents) => {
-      setContents(newContents);
-      const calculatedStats = contentService.getStats(newContents);
+      const safeNew = Array.isArray(newContents) ? newContents : [];
+      setContents(safeNew);
+      const calculatedStats = contentService.getStats(safeNew) || {};
       setStats(prev => ({ ...prev, ...calculatedStats }));
     });
 
@@ -87,14 +90,18 @@ export default function App() {
   };
 
   const handleSaveContent = async (formData) => {
-    if (editingItem?.id) {
-      await contentService.updateContent(editingItem.id, formData);
-      showToast('Đã cập nhật bài viết lên Supabase!', 'success');
-    } else {
-      await contentService.createContent(formData);
-      showToast('Đã lưu bài viết mới vào Supabase!', 'success');
+    try {
+      if (editingItem?.id) {
+        await contentService.updateContent(editingItem.id, formData);
+        showToast('Đã cập nhật bài viết lên Supabase!', 'success');
+      } else {
+        await contentService.createContent(formData);
+        showToast('Đã lưu bài viết mới vào Supabase!', 'success');
+      }
+      refreshData();
+    } catch (e) {
+      showToast('Lỗi lưu dữ liệu: ' + e.message, 'error');
     }
-    refreshData();
   };
 
   const handleRequestDelete = (item) => {
@@ -103,11 +110,15 @@ export default function App() {
   };
 
   const handleConfirmDelete = async (id) => {
-    await contentService.deleteContent(id, deletingItem?.code);
-    setIsDeleteModalOpen(false);
-    setDeletingItem(null);
-    showToast('Đã xóa nội dung khỏi Supabase!', 'info');
-    refreshData();
+    try {
+      await contentService.deleteContent(id, deletingItem?.code);
+      setIsDeleteModalOpen(false);
+      setDeletingItem(null);
+      showToast('Đã xóa nội dung khỏi Supabase!', 'info');
+      refreshData();
+    } catch (e) {
+      showToast('Lỗi xóa bài: ' + e.message, 'error');
+    }
   };
 
   const handleExportCSV = (filteredItems) => {
@@ -125,15 +136,15 @@ export default function App() {
     setEditingItem({
       code: `GSA-IDEA-${Math.floor(100 + Math.random() * 900)}`,
       group: 'Nội dung bổ sung',
-      topic: idea.title,
-      description: idea.notes || '',
-      channel: idea.channel || 'TikTok',
-      format: idea.format || 'Video ngắn',
+      topic: idea?.title || '',
+      description: idea?.notes || '',
+      channel: idea?.channel || 'TikTok',
+      format: idea?.format || 'Video ngắn',
       scheduledDate: dateStr,
       deadline: dateStr,
       status: 'Đang làm',
       link: '',
-      notes: (idea.tags || []).map(t => `#${t}`).join(' ')
+      notes: (idea?.tags || []).map(t => `#${t}`).join(' ')
     });
     setCurrentTab('calendar');
     setIsModalOpen(true);
@@ -230,129 +241,133 @@ export default function App() {
   const headerInfo = getHeaderInfo();
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* Sidebar (Left) */}
-      <Sidebar
-        currentTab={currentTab}
-        onSelectTab={setCurrentTab}
-        stats={stats}
-      />
+    <ErrorBoundary fallbackTitle="Ứng dụng gặp sự cố giao diện">
+      <div className="flex min-h-screen bg-[#F8FAFC]">
+        {/* Sidebar (Left) */}
+        <Sidebar
+          currentTab={currentTab}
+          onSelectTab={setCurrentTab}
+          stats={stats}
+        />
 
-      {/* Main Content Area (Right) */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        <main className="flex-1 p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          {/* Header */}
-          <Header
-            breadcrumb={headerInfo.breadcrumb}
-            title={headerInfo.title}
-            subtitle={headerInfo.subtitle}
-            onOpenCreateModal={handleOpenCreateModal}
-            showCreateButton={headerInfo.showCreateButton}
-            actionButtonLabel={headerInfo.actionButtonLabel}
-            storageStatus="Đồng bộ Supabase trực tuyến"
-          />
+        {/* Main Content Area (Right) */}
+        <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+          <main className="flex-1 p-6 lg:p-8 max-w-7xl w-full mx-auto">
+            {/* Header */}
+            <Header
+              breadcrumb={headerInfo.breadcrumb}
+              title={headerInfo.title}
+              subtitle={headerInfo.subtitle}
+              onOpenCreateModal={handleOpenCreateModal}
+              showCreateButton={headerInfo.showCreateButton}
+              actionButtonLabel={headerInfo.actionButtonLabel}
+              storageStatus="Đồng bộ Supabase trực tuyến"
+            />
 
-          {/* Tab Views */}
-          <div className="mt-4">
-            {currentTab === 'calendar' && (
-              <ContentCalendar
-                contents={contents}
-                onEdit={handleEditItem}
-                onDelete={handleRequestDelete}
-                onExportCSV={handleExportCSV}
-                onCreateNew={handleOpenCreateModal}
-              />
-            )}
+            {/* Tab Views wrapped in ErrorBoundary per tab */}
+            <div className="mt-4">
+              <ErrorBoundary key={currentTab} fallbackTitle={`Lỗi khi tải tab ${headerInfo.title}`}>
+                {currentTab === 'calendar' && (
+                  <ContentCalendar
+                    contents={contents}
+                    onEdit={handleEditItem}
+                    onDelete={handleRequestDelete}
+                    onExportCSV={handleExportCSV}
+                    onCreateNew={handleOpenCreateModal}
+                  />
+                )}
 
-            {currentTab === 'overview' && (
-              <Overview
-                contents={contents}
-                stats={stats}
-                onNavigateToCalendar={() => setCurrentTab('calendar')}
-                onOpenCreateModal={handleOpenCreateModal}
-              />
-            )}
+                {currentTab === 'overview' && (
+                  <Overview
+                    contents={contents}
+                    stats={stats}
+                    onNavigateToCalendar={() => setCurrentTab('calendar')}
+                    onOpenCreateModal={handleOpenCreateModal}
+                  />
+                )}
 
-            {currentTab === 'manual-metrics' && (
-              <ManualMetrics
-                contents={contents}
-                onShowToast={showToast}
-              />
-            )}
+                {currentTab === 'manual-metrics' && (
+                  <ManualMetrics
+                    contents={contents}
+                    onShowToast={showToast}
+                  />
+                )}
 
-            {currentTab === 'analytics' && (
-              <PerformanceAnalytics
-                contents={contents}
-              />
-            )}
+                {currentTab === 'analytics' && (
+                  <PerformanceAnalytics
+                    contents={contents}
+                  />
+                )}
 
-            {currentTab === 'idea-bank' && (
-              <IdeaBank
-                onConvertIdeaToContent={handleConvertIdeaToContent}
-                onShowToast={showToast}
-              />
-            )}
+                {currentTab === 'idea-bank' && (
+                  <IdeaBank
+                    onConvertIdeaToContent={handleConvertIdeaToContent}
+                    onShowToast={showToast}
+                  />
+                )}
 
-            {currentTab === 'growth' && (
-              <ProfileGrowth />
-            )}
+                {currentTab === 'growth' && (
+                  <ProfileGrowth />
+                )}
 
-            {currentTab === 'conversions' && (
-              <ConversionTracker
-                onShowToast={showToast}
-              />
-            )}
+                {currentTab === 'conversions' && (
+                  <ConversionTracker
+                    onShowToast={showToast}
+                  />
+                )}
 
-            {currentTab === 'checklist' && (
-              <CampaignChecklist
-                onShowToast={showToast}
-              />
-            )}
+                {currentTab === 'checklist' && (
+                  <CampaignChecklist
+                    onShowToast={showToast}
+                  />
+                )}
 
-            {currentTab === 'weekly-summary' && (
-              <WeeklySummary
-                contents={contents}
-                stats={stats}
-                onShowToast={showToast}
-              />
-            )}
+                {currentTab === 'weekly-summary' && (
+                  <WeeklySummary
+                    contents={contents}
+                    stats={stats}
+                    onShowToast={showToast}
+                  />
+                )}
 
-            {currentTab === 'settings' && (
-              <SettingsData
-                onReloadData={refreshData}
-                onShowToast={showToast}
-              />
-            )}
-          </div>
-        </main>
+                {currentTab === 'settings' && (
+                  <SettingsData
+                    onReloadData={refreshData}
+                    onShowToast={showToast}
+                  />
+                )}
+              </ErrorBoundary>
+            </div>
+          </main>
 
-        {/* Footer */}
-        <footer className="py-4 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white/50">
-          Creator Studio • GSA Campaign • Đồng bộ trực tiếp với Supabase Cloud
-        </footer>
+          {/* Footer */}
+          <footer className="py-4 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white/50">
+            Creator Studio • GSA Campaign • Đồng bộ trực tiếp với Supabase Cloud
+          </footer>
+        </div>
+
+        {/* Modals */}
+        <ContentModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveContent}
+          initialData={editingItem}
+        />
+
+        <DeleteConfirmModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleConfirmDelete}
+          item={deletingItem}
+        />
+
+        {/* Global Toast */}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ message: '', type: 'success' })}
+        />
       </div>
-
-      {/* Modals */}
-      <ContentModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveContent}
-        initialData={editingItem}
-      />
-
-      <DeleteConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-        item={deletingItem}
-      />
-
-      {/* Global Toast */}
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast({ message: '', type: 'success' })}
-      />
-    </div>
+    </ErrorBoundary>
   );
 }
