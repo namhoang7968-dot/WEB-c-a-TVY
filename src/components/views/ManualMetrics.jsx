@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { metricsService } from '../../services/otherDataService';
 import { socialSyncService } from '../../services/socialSyncService';
-import { Save, BarChart3, TrendingUp, Eye, Heart, MessageSquare, Share2, RefreshCw, Bookmark } from 'lucide-react';
+import { Eye, Heart, MessageSquare, Share2, RefreshCw, Bookmark } from 'lucide-react';
 import BookmarkletModal from '../BookmarkletModal';
 
 export default function ManualMetrics({ contents = [], onShowToast }) {
@@ -21,7 +21,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
       if (res?.success) {
         onShowToast?.(`Đã đồng bộ ${res.videosCount || 0} video từ TikTok @${res.handle}!`, 'success');
         const refreshed = await metricsService.fetch();
-        setMetrics(refreshed);
+        setMetrics(refreshed || []);
       } else {
         onShowToast?.('TikTok yêu cầu xác thực bot. Hãy mở Bookmarklet để quét trực tiếp từ trình duyệt!', 'info');
         setShowBookmarkletModal(true);
@@ -71,27 +71,27 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
   const totalShares = safeMetrics.reduce((acc, curr) => acc + (Number(curr?.shares) || 0), 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Top Action Toolbar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-bold text-slate-900 text-sm">Quản lý & Cập nhật số liệu bài viết</h3>
-          <p className="text-xs text-slate-500">Đồng bộ tự động từ TikTok hoặc quét số liệu Facebook qua Bookmarklet</p>
+          <h3 className="font-semibold text-slate-900 text-sm">Quản lý số liệu bài viết</h3>
+          <p className="text-xs text-slate-500 font-normal">Đồng bộ tự động từ TikTok hoặc quét số liệu Facebook qua Bookmarklet</p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={handleSyncTikTok}
             disabled={isSyncing}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-sm transition-all cursor-pointer disabled:opacity-70"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-2xs transition-colors cursor-pointer disabled:opacity-60"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-            <span>{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ TikTok ngay'}</span>
+            <span>{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ TikTok'}</span>
           </button>
 
           <button
             onClick={() => setShowBookmarkletModal(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer"
           >
             <Bookmark className="w-3.5 h-3.5 text-blue-600" />
             <span>Bookmarklet Quét Facebook</span>
@@ -100,58 +100,58 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
       </div>
 
       {/* Top Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold mb-1">
-            <Eye className="w-4 h-4 text-blue-500" />
+          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
+            <Eye className="w-3.5 h-3.5 text-blue-600" />
             <span>Tổng lượt xem (Views)</span>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{totalViews.toLocaleString('vi-VN')}</p>
+          <p className="text-2xl font-bold font-mono text-slate-900">{totalViews.toLocaleString('vi-VN')}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold mb-1">
-            <Heart className="w-4 h-4 text-rose-500" />
-            <span>Tổng lượt thích (Likes)</span>
+          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
+            <Heart className="w-3.5 h-3.5 text-rose-500" />
+            <span>Tổng thích (Likes)</span>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{totalLikes.toLocaleString('vi-VN')}</p>
+          <p className="text-2xl font-bold font-mono text-slate-900">{totalLikes.toLocaleString('vi-VN')}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold mb-1">
-            <MessageSquare className="w-4 h-4 text-amber-500" />
+          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
+            <MessageSquare className="w-3.5 h-3.5 text-amber-500" />
             <span>Bình luận (Comments)</span>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{totalComments.toLocaleString('vi-VN')}</p>
+          <p className="text-2xl font-bold font-mono text-slate-900">{totalComments.toLocaleString('vi-VN')}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold mb-1">
-            <Share2 className="w-4 h-4 text-emerald-500" />
+          <div className="flex items-center gap-2 text-slate-500 text-xs font-medium mb-1">
+            <Share2 className="w-3.5 h-3.5 text-emerald-500" />
             <span>Chia sẻ (Shares)</span>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{totalShares.toLocaleString('vi-VN')}</p>
+          <p className="text-2xl font-bold font-mono text-slate-900">{totalShares.toLocaleString('vi-VN')}</p>
         </div>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Bảng nhập số liệu từng bài</h3>
-            <p className="text-xs text-slate-500">Cập nhật chỉ số thực tế sau khi đăng bài để báo cáo ban tổ chức</p>
+            <h3 className="text-sm font-semibold text-slate-900">Bảng nhập số liệu từng bài</h3>
+            <p className="text-xs text-slate-500 font-normal">Cập nhật chỉ số thực tế sau khi đăng bài để báo cáo ban tổ chức</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm min-w-[700px]">
-            <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+          <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
+            <thead className="bg-slate-50/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200/90">
               <tr>
                 <th className="py-3 px-4">Mã nội dung</th>
                 <th className="py-3 px-4">Kênh</th>
-                <th className="py-3 px-4">Lượt xem (Views)</th>
-                <th className="py-3 px-4">Thích (Likes)</th>
+                <th className="py-3 px-4">Lượt xem</th>
+                <th className="py-3 px-4">Thích</th>
                 <th className="py-3 px-4">Bình luận</th>
                 <th className="py-3 px-4">Chia sẻ</th>
-                <th className="py-3 px-4">Lưu (Saves)</th>
-                <th className="py-3 px-4 text-center">Thao tác</th>
+                <th className="py-3 px-4">Lưu</th>
+                <th className="py-3 px-4 text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -163,96 +163,96 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                   const isEditing = editingId === item?.id;
 
                   return (
-                    <tr key={item?.id || Math.random()} className="hover:bg-slate-50/60">
-                      <td className="py-3 px-4 font-semibold text-slate-900 text-xs">
-                        {item?.code}
+                    <tr key={item?.id || Math.random()} className="hover:bg-slate-50/75 transition-colors">
+                      <td className="py-3.5 px-4 font-semibold text-slate-900 text-xs">
+                        <span className="font-mono">{item?.code}</span>
                         <span className="block text-[11px] text-slate-400 font-normal truncate max-w-xs">{item?.topic}</span>
                       </td>
-                      <td className="py-3 px-4 text-xs text-slate-600">{item?.channel}</td>
+                      <td className="py-3.5 px-4 text-xs text-slate-600">{item?.channel}</td>
 
                       {/* Views */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {isEditing ? (
                           <input
                             type="number"
                             value={tempRow.views ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, views: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
                           />
                         ) : (
-                          <span className="font-semibold text-slate-800">{(metric?.views || 0).toLocaleString()}</span>
+                          <span className="font-medium text-slate-900 font-mono">{(metric?.views || 0).toLocaleString()}</span>
                         )}
                       </td>
 
                       {/* Likes */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {isEditing ? (
                           <input
                             type="number"
                             value={tempRow.likes ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, likes: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
                           />
                         ) : (
-                          <span className="font-semibold text-slate-800">{(metric?.likes || 0).toLocaleString()}</span>
+                          <span className="font-medium text-slate-900 font-mono">{(metric?.likes || 0).toLocaleString()}</span>
                         )}
                       </td>
 
                       {/* Comments */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {isEditing ? (
                           <input
                             type="number"
                             value={tempRow.comments ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, comments: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
                           />
                         ) : (
-                          <span className="font-semibold text-slate-800">{(metric?.comments || 0).toLocaleString()}</span>
+                          <span className="font-medium text-slate-900 font-mono">{(metric?.comments || 0).toLocaleString()}</span>
                         )}
                       </td>
 
                       {/* Shares */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {isEditing ? (
                           <input
                             type="number"
                             value={tempRow.shares ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, shares: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
                           />
                         ) : (
-                          <span className="font-semibold text-slate-800">{(metric?.shares || 0).toLocaleString()}</span>
+                          <span className="font-medium text-slate-900 font-mono">{(metric?.shares || 0).toLocaleString()}</span>
                         )}
                       </td>
 
                       {/* Saves */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         {isEditing ? (
                           <input
                             type="number"
                             value={tempRow.saves ?? 0}
                             onChange={(e) => setTempRow({ ...tempRow, saves: parseInt(e.target.value) || 0 })}
-                            className="w-20 px-2 py-1 text-xs border rounded border-blue-400"
+                            className="w-20 px-2 py-1 text-xs border rounded-md border-blue-500 font-mono focus:outline-none"
                           />
                         ) : (
-                          <span className="font-semibold text-slate-800">{(metric?.saves || 0).toLocaleString()}</span>
+                          <span className="font-medium text-slate-900 font-mono">{(metric?.saves || 0).toLocaleString()}</span>
                         )}
                       </td>
 
                       {/* Action */}
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3.5 px-4 text-right">
                         {isEditing ? (
-                          <div className="flex items-center justify-center gap-1">
+                          <div className="inline-flex items-center gap-1.5">
                             <button
                               onClick={() => handleSaveEdit(item?.code)}
-                              className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold hover:bg-blue-700 cursor-pointer"
+                              className="bg-blue-600 text-white px-2.5 py-1 rounded-md text-xs font-medium hover:bg-blue-700 cursor-pointer shadow-2xs"
                             >
                               Lưu
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="text-slate-500 hover:text-slate-700 text-xs px-1 cursor-pointer"
+                              className="text-slate-500 hover:text-slate-800 text-xs px-1.5 py-1 cursor-pointer"
                             >
                               Hủy
                             </button>
@@ -260,7 +260,7 @@ export default function ManualMetrics({ contents = [], onShowToast }) {
                         ) : (
                           <button
                             onClick={() => handleStartEdit(item)}
-                            className="text-xs text-blue-600 font-semibold hover:underline cursor-pointer"
+                            className="text-xs text-blue-600 font-medium hover:underline cursor-pointer"
                           >
                             Nhập số liệu
                           </button>

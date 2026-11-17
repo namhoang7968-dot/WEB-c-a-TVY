@@ -84,32 +84,32 @@ export default function ContentModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200/80 w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
         {/* Modal Header */}
-        <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-900">
               {isEditing ? 'Chỉnh sửa nội dung' : 'Tạo mới nội dung'}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5 font-normal">
               {isEditing ? 'Cập nhật thông tin chi tiết của bài đăng' : 'Điền thông tin kế hoạch nội dung mới cho chiến dịch'}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body Form */}
-        <form onSubmit={handleSubmit} className="overflow-y-auto p-6 space-y-4 text-sm flex-1">
+        <form onSubmit={handleSubmit} className="overflow-y-auto p-6 space-y-4 text-xs sm:text-sm flex-1">
           {/* Row 1: Mã & Nhóm */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Mã nội dung <span className="text-rose-500">*</span>
               </label>
               <input
@@ -117,21 +117,21 @@ export default function ContentModal({
                 value={formData.code}
                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                 placeholder="VD: GSA-CH01-STUDY-TikTok"
-                className={`w-full px-3.5 py-2 rounded-lg border text-sm ${
-                  errors.code ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                className={`w-full px-3 py-2 rounded-lg border text-xs sm:text-sm font-mono ${
+                  errors.code ? 'border-rose-300 bg-rose-50/30' : 'border-slate-200'
                 } focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500`}
               />
               {errors.code && <p className="text-[11px] text-rose-500 mt-1">{errors.code}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Nhóm nội dung <span className="text-rose-500">*</span>
               </label>
               <select
                 value={formData.group}
                 onChange={(e) => setFormData({ ...formData, group: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
               >
                 <option value="Bài bắt buộc">Bài bắt buộc (Target 8 bài)</option>
                 <option value="Nội dung bổ sung">Nội dung bổ sung</option>
@@ -141,7 +141,7 @@ export default function ContentModal({
 
           {/* Row 2: Chủ đề & Mục tiêu */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-medium text-slate-700 mb-1.5">
               Chủ đề & Tiêu đề chính <span className="text-rose-500">*</span>
             </label>
             <input
@@ -149,8 +149,8 @@ export default function ContentModal({
               value={formData.topic}
               onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
               placeholder="VD: Topic: Tuần 1 — Study | Chạy Deadline Thuyết Trình..."
-              className={`w-full px-3.5 py-2 rounded-lg border text-sm ${
-                errors.topic ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+              className={`w-full px-3 py-2 rounded-lg border text-xs sm:text-sm ${
+                errors.topic ? 'border-rose-300 bg-rose-50/30' : 'border-slate-200'
               } focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500`}
             />
             {errors.topic && <p className="text-[11px] text-rose-500 mt-1">{errors.topic}</p>}
@@ -158,7 +158,7 @@ export default function ContentModal({
 
           {/* Row 3: Mô tả tóm tắt */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-medium text-slate-700 mb-1.5">
               Mục tiêu & Nội dung chi tiết
             </label>
             <textarea
@@ -166,20 +166,20 @@ export default function ContentModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Minh họa quy trình sử dụng Gemini để giải quyết bài toán cụ thể..."
-              className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 leading-relaxed"
             />
           </div>
 
           {/* Row 4: Kênh & Định dạng */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Kênh xuất bản
               </label>
               <select
                 value={formData.channel}
                 onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               >
                 <option value="TikTok">TikTok</option>
                 <option value="Facebook cá nhân">Facebook cá nhân</option>
@@ -192,13 +192,13 @@ export default function ContentModal({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Định dạng nội dung
               </label>
               <select
                 value={formData.format}
                 onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               >
                 <option value="Video ngắn">Video ngắn (9:16)</option>
                 <option value="Bài viết">Bài viết (Single Post / Text + Ảnh)</option>
@@ -212,7 +212,7 @@ export default function ContentModal({
           {/* Row 5: Ngày dự kiến & Hạn chót & Trạng thái */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Ngày dự kiến <span className="text-rose-500">*</span>
               </label>
               <input
@@ -220,12 +220,12 @@ export default function ContentModal({
                 value={formData.scheduledDate}
                 onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
                 placeholder="VD: 22/10/2024"
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Hạn chót (Deadline)
               </label>
               <input
@@ -233,18 +233,18 @@ export default function ContentModal({
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                 placeholder="VD: 23/10/2024"
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Trạng thái
               </label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
               >
                 <option value="Đang làm">Đang làm</option>
                 <option value="Đã đăng">Đã đăng</option>
@@ -255,7 +255,7 @@ export default function ContentModal({
 
           {/* Row 6: Link bài viết (tùy chọn) */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-medium text-slate-700 mb-1.5">
               Link bài viết sau khi đăng (Tùy chọn)
             </label>
             <input
@@ -263,13 +263,13 @@ export default function ContentModal({
               value={formData.link}
               onChange={(e) => setFormData({ ...formData, link: e.target.value })}
               placeholder="https://tiktok.com/@... hoặc https://facebook.com/..."
-              className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
 
           {/* Row 7: Ghi chú */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-medium text-slate-700 mb-1.5">
               Ghi chú thêm & Hashtags
             </label>
             <input
@@ -277,22 +277,22 @@ export default function ContentModal({
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="VD: #GSA #GoogleAI #Deadline"
-              className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
 
           {/* Modal Footer */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium text-xs transition-colors cursor-pointer"
+              className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs transition-colors cursor-pointer"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-semibold text-xs transition-all shadow-sm cursor-pointer"
+              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-medium text-xs transition-colors shadow-2xs cursor-pointer"
             >
               {isEditing ? 'Lưu thay đổi' : 'Tạo nội dung'}
             </button>

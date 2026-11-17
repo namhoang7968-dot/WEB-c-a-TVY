@@ -47,26 +47,26 @@ export default function BookmarkletModal({ isOpen, onClose, defaultTab = 'facebo
         </div>
 
         {/* Tab switch */}
-        <div className="px-6 pt-4 border-b border-slate-100 flex gap-4">
+        <div className="px-6 pt-3 border-b border-slate-100 flex gap-4">
           <button
             onClick={() => setActiveTab('facebook')}
-            className={`pb-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${
+            className={`pb-2.5 text-xs font-medium border-b-2 transition-colors cursor-pointer ${
               activeTab === 'facebook'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-blue-600 text-blue-600 font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-700'
             }`}
           >
-            📘 Facebook cá nhân (@thuyvy.vandinh)
+            Facebook cá nhân (@thuyvy.vandinh)
           </button>
           <button
             onClick={() => setActiveTab('tiktok')}
-            className={`pb-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${
+            className={`pb-2.5 text-xs font-medium border-b-2 transition-colors cursor-pointer ${
               activeTab === 'tiktok'
-                ? 'border-slate-900 text-slate-900'
+                ? 'border-slate-900 text-slate-900 font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-700'
             }`}
           >
-            🎵 TikTok (@thuyvy.risetoshine)
+            TikTok (@thuyvy.risetoshine)
           </button>
         </div>
 

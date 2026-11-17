@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Database, CloudCheck, Sparkles } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export default function Header({
   breadcrumb = 'GSA Campaign / Lịch nội dung',
@@ -11,22 +11,19 @@ export default function Header({
   storageStatus = 'Đồng bộ Supabase trực tuyến'
 }) {
   return (
-    <div className="pb-5 pt-1">
+    <div className="pb-5 pt-0.5">
       {/* Top row: Breadcrumb & Right Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
         {/* Breadcrumb */}
-        <div className="text-xs text-slate-400 font-medium">
-          {breadcrumb}
+        <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium tracking-normal">
+          <span>{breadcrumb}</span>
         </div>
 
         {/* Status Badge & Action Button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* Storage status badge: Live Supabase Connected */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-xs font-semibold text-emerald-700 shadow-2xs">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-            </span>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-emerald-200/80 text-[11px] font-medium text-emerald-700 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             <span>{storageStatus}</span>
           </div>
 
@@ -34,9 +31,9 @@ export default function Header({
           {showCreateButton && (
             <button
               onClick={onOpenCreateModal}
-              className="inline-flex items-center gap-1.5 bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.98] text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition-all duration-150 cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white text-xs sm:text-sm font-medium px-3.5 py-1.5 sm:py-2 rounded-lg shadow-2xs transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-[2.2]" />
               <span>{actionButtonLabel.replace(/^\+\s*/, '')}</span>
             </button>
           )}
@@ -45,9 +42,9 @@ export default function Header({
 
       {/* Main Title & Subtitle */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">{title}</h1>
         {subtitle && (
-          <p className="mt-1 text-sm text-slate-500 leading-normal font-normal">
+          <p className="mt-1 text-xs sm:text-sm text-slate-500 leading-relaxed font-normal max-w-4xl">
             {subtitle}
           </p>
         )}
