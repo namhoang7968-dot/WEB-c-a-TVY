@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { metricsService } from '../../services/otherDataService';
-import { socialSyncService } from '../../services/socialSyncService';
+import { metricsService } from '@/services/otherDataService';
+import { socialSyncService } from '@/services/socialSyncService';
 import { Eye, Heart, MessageSquare, Share2, RefreshCw, Bookmark, ExternalLink } from 'lucide-react';
-import BookmarkletModal from '../BookmarkletModal';
+import BookmarkletModal from '@/components/BookmarkletModal';
 
 export default function ManualMetrics({ contents = [], onShowToast }) {
   const [metrics, setMetrics] = useState(() => metricsService.get() || []);

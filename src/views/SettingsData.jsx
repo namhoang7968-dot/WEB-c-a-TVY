@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { settingsService } from '../../services/otherDataService';
-import { contentService } from '../../services/contentService';
-import { supabase, SUPABASE_CONFIG } from '../../services/supabaseClient';
+import { settingsService } from '@/services/otherDataService';
+import { contentService } from '@/services/contentService';
+import { supabase, SUPABASE_CONFIG } from '@/services/supabaseClient';
 import { Download, Upload, ShieldCheck, Check, RefreshCw, CheckCircle2 } from 'lucide-react';
 
 export default function SettingsData({ onReloadData, onShowToast }) {

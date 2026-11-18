@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { checklistService } from '../../services/otherDataService';
+import { checklistService } from '@/services/otherDataService';
 import { Square, Plus, Trash2, CheckCircle2 } from 'lucide-react';
 
 export default function CampaignChecklist({ onShowToast }) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { conversionService } from '../../services/otherDataService';
+import { conversionService } from '@/services/otherDataService';
 import { Copy, Check, MousePointerClick, UserPlus, Award } from 'lucide-react';
 
 export default function ConversionTracker({ onShowToast }) {

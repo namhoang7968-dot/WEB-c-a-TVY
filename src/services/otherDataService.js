@@ -1,7 +1,7 @@
 // Data services for Checklist, Ideas, Metrics, Profile Growth, Conversions & Settings
 // Complete with Safe Fallbacks and Supabase Direct Sync
 
-import { supabase } from './supabaseClient';
+import { supabase } from '@/services/supabaseClient';
 
 const CHECKLIST_KEY = 'gsa_campaign_checklist';
 const IDEAS_KEY = 'gsa_campaign_ideas';

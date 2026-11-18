@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { metricsService } from '../../services/otherDataService';
-import { socialSyncService } from '../../services/socialSyncService';
+import { metricsService } from '@/services/otherDataService';
+import { socialSyncService } from '@/services/socialSyncService';
 import {
   Award,
   RefreshCw,
@@ -28,7 +28,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import BookmarkletModal from '../BookmarkletModal';
+import BookmarkletModal from '@/components/BookmarkletModal';
 
 const CHART_PALETTE = ['#1D4ED8', '#E11D48', '#D97706', '#059669', '#475569'];
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FB_BOOKMARKLET_CODE, TIKTOK_BOOKMARKLET_CODE } from '../services/socialSyncService';
+import { FB_BOOKMARKLET_CODE, TIKTOK_BOOKMARKLET_CODE } from '@/services/socialSyncService';
 import { X, Copy, Check, Bookmark, ExternalLink, Sparkles, HelpCircle } from 'lucide-react';
 
 export default function BookmarkletModal({ isOpen, onClose, defaultTab = 'facebook' }) {

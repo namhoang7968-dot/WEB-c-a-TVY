@@ -1,7 +1,7 @@
 // Content Data Management Service
 // Direct Sync with Supabase (with offline-first LocalStorage fallback)
 
-import { supabase } from './supabaseClient';
+import { supabase } from '@/services/supabaseClient';
 
 const STORAGE_KEY = 'gsa_creator_studio_contents';
 

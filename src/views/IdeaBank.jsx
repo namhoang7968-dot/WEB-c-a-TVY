@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ideaService } from '../../services/otherDataService';
+import { ideaService } from '@/services/otherDataService';
 import { Plus, ArrowRight, Trash2, Lightbulb } from 'lucide-react';
 
 export default function IdeaBank({ onConvertIdeaToContent, onShowToast }) {

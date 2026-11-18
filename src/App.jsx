@@ -1,26 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import ContentCalendar from './components/ContentCalendar';
-import ContentModal from './components/ContentModal';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
-import Toast from './components/Toast';
-import ErrorBoundary from './components/ErrorBoundary';
+import Sidebar from '@/components/Sidebar';
+import Header from '@/components/Header';
+import ContentCalendar from '@/components/ContentCalendar';
+import ContentModal from '@/components/ContentModal';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import Toast from '@/components/Toast';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Auxiliary views
-import Overview from './components/views/Overview';
-import ManualMetrics from './components/views/ManualMetrics';
-import PerformanceAnalytics from './components/views/PerformanceAnalytics';
-import IdeaBank from './components/views/IdeaBank';
-import ProfileGrowth from './components/views/ProfileGrowth';
-import ConversionTracker from './components/views/ConversionTracker';
-import CampaignChecklist from './components/views/CampaignChecklist';
-import WeeklySummary from './components/views/WeeklySummary';
-import SettingsData from './components/views/SettingsData';
+import Overview from '@/views/Overview';
+import ManualMetrics from '@/views/ManualMetrics';
+import PerformanceAnalytics from '@/views/PerformanceAnalytics';
+import IdeaBank from '@/views/IdeaBank';
+import ProfileGrowth from '@/views/ProfileGrowth';
+import ConversionTracker from '@/views/ConversionTracker';
+import CampaignChecklist from '@/views/CampaignChecklist';
+import WeeklySummary from '@/views/WeeklySummary';
+import SettingsData from '@/views/SettingsData';
 
-import { contentService } from './services/contentService';
-import { checklistService } from './services/otherDataService';
-import { supabase } from './services/supabaseClient';
+import { contentService } from '@/services/contentService';
+import { checklistService } from '@/services/otherDataService';
+import { supabase } from '@/services/supabaseClient';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('calendar');

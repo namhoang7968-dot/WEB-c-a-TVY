@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { growthService } from '../../services/otherDataService';
+import { growthService } from '@/services/otherDataService';
 
 export default function ProfileGrowth() {
   const [channels] = useState(() => growthService.get() || []);

@@ -1,7 +1,7 @@
 // Social Media Sync Service (TikTok & Facebook)
 // Handles API calls, Supabase sync, and Bookmarklet generators
 
-import { supabase } from './supabaseClient';
+import { supabase } from '@/services/supabaseClient';
 
 const TARGET_APP = 'https://web-c-a-tvy.vercel.app/';
 
