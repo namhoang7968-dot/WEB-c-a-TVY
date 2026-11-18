@@ -54,16 +54,17 @@ describe('Social Media Metric Parser (pV)', () => {
 
   it('extracts number tokens from interaction summary row', () => {
     const rowText = '41\n10 comments\n2 shares';
-    const tokens = [];
-    const lines = rowText.split(/\n|\t|\s{2,}/);
-    for (const line of lines) {
-      const m = line.trim().match(/^([\d]+(?:[.,]\d+)?(?:\s*[KMBkmb](?![a-zA-Zà-ỹÀ-Ỹ]))?)/);
-      if (m) {
-        const val = pV(m[1]);
-        if (val > 0) tokens.push(val);
-      }
-    }
-    expect(tokens).toEqual([41, 10, 2]);
+    const numMatches = Array.from(rowText.matchAll(/([\d]+(?:[.,]\d+)?(?:\s*[KMBkmb](?![a-zA-Zà-ỹÀ-Ỹ]))?)/gi));
+    const vals = numMatches.map(m => pV(m[1])).filter(v => v > 0);
+    expect(vals).toEqual([41, 10, 2]);
+  });
+
+  it('extracts likes and comments even on single line like "41 10 bình luận"', () => {
+    const rowText = '41 10 bình luận';
+    const numMatches = Array.from(rowText.matchAll(/([\d]+(?:[.,]\d+)?(?:\s*[KMBkmb](?![a-zA-Zà-ỹÀ-Ỹ]))?)/gi));
+    const vals = numMatches.map(m => pV(m[1])).filter(v => v > 0);
+    expect(vals[0]).toBe(41); // likes
+    expect(vals[1]).toBe(10); // comments
   });
 });
 
